@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Cash Botswana — Student Loan Demo</title>
+  <meta name="description" content="Campus Cash Botswana demo app for 30-day student loans with a 25% fee. Apply, track, and manage demo loans." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">CC</div>
+        <div>
+          <h1>Campus Cash</h1>
+          <p>Botswana Student Loan Demo</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-link active" data-view="home">Home</button>
+        <button class="nav-link" data-view="apply">Apply</button>
+        <button class="nav-link" data-view="student">Student Portal</button>
+        <button class="nav-link" data-view="admin">Admin</button>
+        <button class="nav-link" data-view="faq">FAQ</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="view active">
+        <div class="hero grid-2">
+          <div>
+            <span class="pill">Fast • Simple • 100% Demo</span>
+            <h2>Short-term student cash advances for Botswana campuses</h2>
+            <p class="lead">Campus Cash is a concept app for 30-day student loans. Students can estimate repayment, apply in minutes, track balances, and view repayment dates. Admin users can review applications and portfolio performance.</p>
+            <div class="cta-row">
+              <button class="primary" data-jump="apply">Start Application</button>
+              <button class="secondary" data-jump="student">Open Student Portal</button>
+            </div>
+            <div class="stats">
+              <div class="stat-card"><strong>30 days</strong><span>Loan term</span></div>
+              <div class="stat-card"><strong>25%</strong><span>Fixed fee</span></div>
+              <div class="stat-card"><strong>BWP 300–2,500</strong><span>Demo range</span></div>
+            </div>
+          </div>
+          <div class="panel spotlight">
+            <h3>Quick Calculator</h3>
+            <div class="field">
+              <label for="calcAmount">Loan amount (BWP)</label>
+              <input id="calcAmount" type="range" min="300" max="2500" step="50" value="1000" />
+            </div>
+            <div class="calc-amount"><span id="calcAmountValue">BWP 1,000</span></div>
+            <div class="summary-list">
+              <div><span>Principal</span><strong id="principalValue">BWP 1,000</strong></div>
+              <div><span>25% fee</span><strong id="feeValue">BWP 250</strong></div>
+              <div><span>Total repayment</span><strong id="repaymentValue">BWP 1,250</strong></div>
+              <div><span>Due in</span><strong>30 days</strong></div>
+            </div>
+            <button class="primary full" data-jump="apply">Apply for this amount</button>
+          </div>
+        </div>
+
+        <div class="features grid-3">
+          <article class="panel">
+            <h3>Built for students</h3>
+            <p>Designed around registration cycles, transport needs, food, emergency cash flow, and short-term academic expenses.</p>
+          </article>
+          <article class="panel">
+            <h3>Simple decisions</h3>
+            <p>Demo underwriting uses basic affordability checks, campus verification, and guardian/contact details.</p>
+          </article>
+          <article class="panel">
+            <h3>Self-service tracking</h3>
+            <p>Students can log in with a demo student ID to monitor loan status, due dates, and repayment progress.</p>
+          </article>
+        </div>
+
+        <div class="panel notice">
+          <strong>Demo notice:</strong> This is a front-end demo for concept validation and presentations. It does not process real payments, real KYC, or real credit decisions.
+        </div>
+      </section>
+
+      <section id="apply" class="view">
+        <div class="section-head">
+          <div>
+            <h2>Loan Application</h2>
+            <p>Complete the demo form below. Approved demo loans appear in the student portal and admin dashboard.</p>
+          </div>
+        </div>
+        <div class="grid-2 form-layout">
+          <form id="applicationForm" class="panel form-card">
+            <div class="grid-2 compact-grid">
+              <div class="field">
+                <label for="fullName">Full name</label>
+                <input id="fullName" name="fullName" required placeholder="e.g. Kabelo Dube" />
+              </div>
+              <div class="field">
+                <label for="studentId">Student ID</label>
+                <input id="studentId" name="studentId" required placeholder="e.g. UB20260091" />
+              </div>
+            </div>
+
+            <div class="grid-2 compact-grid">
+              <div class="field">
+                <label for="campus">Institution</label>
+                <select id="campus" name="campus" required>
+                  <option value="">Select institution</option>
+                  <option>University of Botswana</option>
+                  <option>Botswana Accountancy College</option>
+                  <option>Botho University</option>
+                  <option>Limkokwing University Botswana</option>
+                  <option>BA ISAGO University</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="yearOfStudy">Year of study</label>
+                <select id="yearOfStudy" name="yearOfStudy" required>
+                  <option value="">Select year</option>
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5+</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-2 compact-grid">
+              <div class="field">
+                <label for="phone">Phone number</label>
+                <input id="phone" name="phone" required placeholder="e.g. 71234567" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" required placeholder="e.g. student@email.com" />
+              </div>
+            </div>
+
+            <div class="grid-2 compact-grid">
+              <div class="field">
+                <label for="amount">Requested amount (BWP)</label>
+                <input id="amount" name="amount" type="number" min="300" max="2500" step="50" value="1000" required />
+              </div>
+              <div class="field">
+                <label for="purpose">Purpose</label>
+                <select id="purpose" name="purpose" required>
+                  <option value="">Select purpose</option>
+                  <option>Transport</option>
+                  <option>Food & essentials</option>
+                  <option>Registration fees</option>
+                  <option>Accommodation shortfall</option>
+                  <option>Learning materials</option>
+                  <option>Emergency expense</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-2 compact-grid">
+              <div class="field">
+                <label for="incomeSource">Income source</label>
+                <select id="incomeSource" name="incomeSource" required>
+                  <option value="">Select income source</option>
+                  <option>Allowance</option>
+                  <option>Part-time work</option>
+                  <option>Parent/guardian support</option>
+                  <option>Sponsorship or stipend</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="monthlyIncome">Estimated monthly income/support (BWP)</label>
+                <input id="monthlyIncome" name="monthlyIncome" type="number" min="0" step="50" required placeholder="e.g. 1800" />
+              </div>
+            </div>
+
+            <div class="grid-2 compact-grid">
+              <div class="field">
+                <label for="guardianName">Guardian / emergency contact</label>
+                <input id="guardianName" name="guardianName" required placeholder="e.g. Neo Dube" />
+              </div>
+              <div class="field">
+                <label for="guardianPhone">Guardian phone</label>
+                <input id="guardianPhone" name="guardianPhone" required placeholder="e.g. 72123456" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" rows="4" placeholder="Anything else you want the team to know"></textarea>
+            </div>
+
+            <label class="checkbox-row">
+              <input id="consent" name="consent" type="checkbox" required />
+              <span>I understand this is a demo experience and not a real credit facility.</span>
+            </label>
+
+            <div class="form-actions">
+              <button class="primary" type="submit">Submit Application</button>
+              <button class="secondary" type="button" id="prefillSample">Prefill Sample Data</button>
+            </div>
+          </form>
+
+          <aside class="panel sticky-card">
+            <h3>Repayment Preview</h3>
+            <div class="summary-list big">
+              <div><span>Requested amount</span><strong id="previewPrincipal">BWP 1,000</strong></div>
+              <div><span>Fee (25%)</span><strong id="previewFee">BWP 250</strong></div>
+              <div><span>Total due</span><strong id="previewTotal">BWP 1,250</strong></div>
+              <div><span>Estimated due date</span><strong id="previewDueDate">—</strong></div>
+            </div>
+            <hr />
+            <h4>Demo approval logic</h4>
+            <ul class="check-list">
+              <li>Requested amount within demo range</li>
+              <li>Income/support should reasonably cover repayment</li>
+              <li>Institution and student details provided</li>
+              <li>Guardian / emergency contact included</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <section id="student" class="view">
+        <div class="section-head">
+          <div>
+            <h2>Student Portal</h2>
+            <p>Use your student ID to load your demo profile and check your loan progress.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="field">
+              <label for="lookupStudentId">Enter student ID</label>
+              <div class="inline-input">
+                <input id="lookupStudentId" placeholder="e.g. UB20260091" />
+                <button class="primary" id="loadStudentBtn">Load Profile</button>
+              </div>
+            </div>
+            <div class="helper-text">Tip: submit an application first, or use the sample student ID <strong>UB20260091</strong>.</div>
+          </div>
+          <div class="panel status-card">
+            <span class="pill muted">Demo account access</span>
+            <h3>Student dashboard</h3>
+            <p>Track current loan, due date, repayment amount, and application history.</p>
+          </div>
+        </div>
+
+        <div id="studentEmpty" class="panel empty-state">
+          <h3>No student loaded</h3>
+          <p>Enter a student ID to view the student dashboard.</p>
+        </div>
+
+        <div id="studentDashboard" class="hidden">
+          <div class="grid-4 summary-grid" id="studentSummaryCards"></div>
+          <div class="grid-2">
+            <div class="panel">
+              <h3>Active Loan</h3>
+              <div id="activeLoanDetails"></div>
+              <div class="button-row top-gap">
+                <button class="secondary" id="simulateRepaymentBtn">Simulate Repayment</button>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Profile</h3>
+              <div id="studentProfileDetails"></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Application History</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Total Due</th>
+                    <th>Status</th>
+                    <th>Purpose</th>
+                  </tr>
+                </thead>
+                <tbody id="studentHistoryBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="admin" class="view">
+        <div class="section-head">
+          <div>
+            <h2>Admin Dashboard</h2>
+            <p>Monitor applications, approve or reject demo loans, and review portfolio metrics.</p>
+          </div>
+          <div class="button-row">
+            <button class="secondary" id="seedDemoDataBtn">Reset Demo Data</button>
+            <button class="danger" id="clearDataBtn">Clear All Data</button>
+          </div>
+        </div>
+
+        <div class="grid-4 summary-grid" id="adminMetrics"></div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Portfolio Breakdown</h3>
+            <div id="portfolioBreakdown" class="stack-list"></div>
+          </div>
+          <div class="panel">
+            <h3>Recent Activity</h3>
+            <div id="recentActivity" class="stack-list"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="table-head">
+            <h3>Applications</h3>
+            <input id="adminSearch" placeholder="Search name, student ID, institution..." />
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Applicant</th>
+                  <th>Institution</th>
+                  <th>Amount</th>
+                  <th>Total Due</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="applicationTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="view">
+        <div class="section-head">
+          <div>
+            <h2>FAQ</h2>
+            <p>Frequently asked questions for the Campus Cash demo product.</p>
+          </div>
+        </div>
+        <div class="faq-grid">
+          <article class="panel"><h3>How much can a student borrow?</h3><p>In this demo, applications range from BWP 300 to BWP 2,500.</p></article>
+          <article class="panel"><h3>How long is the loan term?</h3><p>The demo uses a 30-day repayment window from the approval date.</p></article>
+          <article class="panel"><h3>What is the pricing model?</h3><p>The demo shows a fixed 25% fee over 30 days.</p></article>
+          <article class="panel"><h3>Can this process real repayments?</h3><p>No. This version is a presentation-quality front-end demo without payment rails.</p></article>
+          <article class="panel"><h3>Does it save data?</h3><p>Yes, the browser stores demo applications using localStorage on your device.</p></article>
+          <article class="panel"><h3>Can it be expanded?</h3><p>Yes. A future version could add real authentication, backend APIs, payments, KYC, and collections workflows.</p></article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
