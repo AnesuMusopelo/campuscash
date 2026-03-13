@@ -1,517 +1,217 @@
-const STORAGE_KEY = 'campus_cash_demo_v3';
-const FEE_RATE = 0.25;
-const TERM_DAYS = 30;
+const defaultApplications = [
+  {
+    name: 'Keabetswe Dintle', omang: '32900871', studentId: 'UB20260091', institution: 'University of Botswana',
+    phone: '71 111 222', income: 1200, amount: 500, term: '21 days', purpose: 'Food and transport',
+    status: 'approved', score: 78, wallet: 500, repaid: 0, createdAt: 'Today · 09:12', dueDate: futureDate(21)
+  },
+  {
+    name: 'Mpho K.', omang: '45892110', studentId: 'BAC20260119', institution: 'Botswana Accountancy College',
+    phone: '73 876 122', income: 900, amount: 350, term: '14 days', purpose: 'Study materials',
+    status: 'review', score: 59, wallet: 0, repaid: 0, createdAt: 'Today · 10:04', dueDate: futureDate(14)
+  },
+  {
+    name: 'Neo Tshepang', omang: '11223990', studentId: 'BOTHO20260077', institution: 'Botho University',
+    phone: '74 000 981', income: 1600, amount: 800, term: '30 days', purpose: 'Accommodation balance',
+    status: 'approved', score: 84, wallet: 800, repaid: 200, createdAt: 'Yesterday · 16:20', dueDate: futureDate(30)
+  }
+];
 
-const el = {
-  screens: document.querySelectorAll('.screen'),
-  navButtons: document.querySelectorAll('[data-view]'),
-  jumpButtons: document.querySelectorAll('[data-jump]'),
-  calcAmount: document.getElementById('calcAmount'),
-  calcAmountValue: document.getElementById('calcAmountValue'),
-  principalValue: document.getElementById('principalValue'),
-  feeValue: document.getElementById('feeValue'),
-  repaymentValue: document.getElementById('repaymentValue'),
-  applicationForm: document.getElementById('applicationForm'),
-  previewPrincipal: document.getElementById('previewPrincipal'),
-  previewFee: document.getElementById('previewFee'),
-  previewTotal: document.getElementById('previewTotal'),
-  previewDueDate: document.getElementById('previewDueDate'),
-  prefillSample: document.getElementById('prefillSample'),
-  lookupStudentId: document.getElementById('lookupStudentId'),
-  loadStudentBtn: document.getElementById('loadStudentBtn'),
-  studentEmpty: document.getElementById('studentEmpty'),
-  studentDashboard: document.getElementById('studentDashboard'),
-  studentSummaryCards: document.getElementById('studentSummaryCards'),
-  studentProfileDetails: document.getElementById('studentProfileDetails'),
-  activeLoanDetails: document.getElementById('activeLoanDetails'),
-  simulateRepaymentBtn: document.getElementById('simulateRepaymentBtn'),
-  studentHistoryBody: document.getElementById('studentHistoryBody'),
-  adminMetrics: document.getElementById('adminMetrics'),
-  portfolioBreakdown: document.getElementById('portfolioBreakdown'),
-  recentActivity: document.getElementById('recentActivity'),
-  applicationCards: document.getElementById('applicationCards'),
-  adminSearch: document.getElementById('adminSearch'),
-  seedDemoDataBtn: document.getElementById('seedDemoDataBtn'),
-  clearDataBtn: document.getElementById('clearDataBtn'),
-  toast: document.getElementById('toast'),
-  openMenuBtn: document.getElementById('openMenuBtn'),
-  closeMenuBtn: document.getElementById('closeMenuBtn'),
-  quickSheet: document.getElementById('quickSheet')
-};
+const STORAGE_KEY = 'campus-cash-investor-demo-v2';
 
-function safeId() {
-  return (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`);
-}
-
-function addDaysISO(date, days) {
-  const d = new Date(date);
+function futureDate(days) {
+  const d = new Date();
   d.setDate(d.getDate() + days);
-  return d.toISOString();
+  return d.toLocaleDateString('en-BW', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-function currency(n) {
-  return new Intl.NumberFormat('en-BW', {
-    style: 'currency',
-    currency: 'BWP',
-    maximumFractionDigits: 0
-  }).format(Number(n || 0));
+function computeRepayment(amount) {
+  return Math.round(amount * 1.25 * 100) / 100;
 }
 
-function formatDate(v) {
-  if (!v) return '—';
-  return new Date(v).toLocaleDateString('en-BW', { year: 'numeric', month: 'short', day: 'numeric' });
+function loadState() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) return { applications: defaultApplications };
+  try { return JSON.parse(saved); } catch { return { applications: defaultApplications }; }
 }
 
-function computeTotals(amount) {
-  const principal = Number(amount || 0);
-  const fee = Math.round(principal * FEE_RATE);
-  return { principal, fee, total: principal + fee };
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+let state = loadState();
+let currentPortalStudentId = state.applications[0]?.studentId || '';
+
+const screens = document.querySelectorAll('.screen');
+const navBtns = document.querySelectorAll('.nav-btn');
+const amountInput = document.querySelector('input[name="amount"]');
+const amountValue = document.getElementById('amountValue');
+const repaymentValue = document.getElementById('repaymentValue');
+const applicationForm = document.getElementById('applicationForm');
+const decisionCard = document.getElementById('decisionCard');
+const adminList = document.getElementById('adminList');
+
+function showScreen(screen) {
+  screens.forEach(el => el.classList.toggle('active', el.id === `screen-${screen}`));
+  navBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.screen === screen));
 }
 
-function sampleData() {
-  return {
-    applications: [
-      {
-        id: safeId(),
-        fullName: 'Kabelo Dube',
-        studentId: 'UB20260091',
-        campus: 'University of Botswana',
-        yearOfStudy: '3',
-        phone: '71234567',
-        email: 'kabelo@example.com',
-        amount: 1000,
-        purpose: 'Transport',
-        incomeSource: 'Allowance',
-        monthlyIncome: 2200,
-        guardianName: 'Neo Dube',
-        guardianPhone: '72123456',
-        notes: 'Needs support before allowance date.',
-        status: 'approved',
-        submittedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
-        approvedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
-        dueDate: addDaysISO(new Date(), 28),
-        repaymentTotal: 1250,
-        feeAmount: 250,
-        decisionReason: 'Affordable against stated support level.',
-        repaidAt: null
-      },
-      {
-        id: safeId(),
-        fullName: 'Mpho K.',
-        studentId: 'BAC20260119',
-        campus: 'Botswana Accountancy College',
-        yearOfStudy: '2',
-        phone: '73334445',
-        email: 'mpho@example.com',
-        amount: 600,
-        purpose: 'Food & essentials',
-        incomeSource: 'Parent/guardian support',
-        monthlyIncome: 1000,
-        guardianName: 'Kgomotso K.',
-        guardianPhone: '74441122',
-        notes: '',
-        status: 'pending',
-        submittedAt: new Date(Date.now() - 1000 * 60 * 60 * 15).toISOString(),
-        approvedAt: null,
-        dueDate: null,
-        repaymentTotal: 750,
-        feeAmount: 150,
-        decisionReason: 'Awaiting demo review.',
-        repaidAt: null
-      },
-      {
-        id: safeId(),
-        fullName: 'Thato M.',
-        studentId: 'BOTHO20260077',
-        campus: 'Botho University',
-        yearOfStudy: '1',
-        phone: '75556667',
-        email: 'thato@example.com',
-        amount: 2000,
-        purpose: 'Accommodation shortfall',
-        incomeSource: 'Part-time work',
-        monthlyIncome: 1500,
-        guardianName: 'Pako M.',
-        guardianPhone: '76667788',
-        notes: 'High request relative to support.',
-        status: 'rejected',
-        submittedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
-        approvedAt: null,
-        dueDate: null,
-        repaymentTotal: 2500,
-        feeAmount: 500,
-        decisionReason: 'Requested amount appears too high relative to declared support.',
-        repaidAt: null
-      }
-    ]
-  };
-}
-
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function loadData() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    const seeded = sampleData();
-    saveData(seeded);
-    return seeded;
-  }
-  try {
-    return JSON.parse(raw);
-  } catch {
-    const seeded = sampleData();
-    saveData(seeded);
-    return seeded;
-  }
-}
-
-let db = loadData();
-
-function showToast(message) {
-  el.toast.textContent = message;
-  el.toast.classList.remove('hidden');
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => el.toast.classList.add('hidden'), 2600);
-}
-
-function badge(status) {
-  return `<span class="badge ${status}">${status}</span>`;
-}
-
-function metricCard(label, value) {
-  return `<div class="metric-card"><strong>${value}</strong><span>${label}</span></div>`;
-}
-
-function switchView(view) {
-  el.screens.forEach(screen => screen.classList.toggle('active', screen.id === view));
-  el.navButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
-  closeSheet();
-}
-
-function openSheet() { el.quickSheet.classList.remove('hidden'); }
-function closeSheet() { el.quickSheet.classList.add('hidden'); }
-
-el.navButtons.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
-el.jumpButtons.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.jump)));
-el.openMenuBtn.addEventListener('click', openSheet);
-el.closeMenuBtn.addEventListener('click', closeSheet);
-el.quickSheet.addEventListener('click', (e) => { if (e.target === el.quickSheet) closeSheet(); });
-document.querySelectorAll('.sheet-action').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.jump)));
-
-function updateCalculator(amount) {
-  const { principal, fee, total } = computeTotals(amount);
-  el.calcAmountValue.textContent = currency(principal);
-  el.principalValue.textContent = currency(principal);
-  el.feeValue.textContent = currency(fee);
-  el.repaymentValue.textContent = currency(total);
-}
-
-function updatePreview() {
-  const amount = document.getElementById('amount').value || 0;
-  const { principal, fee, total } = computeTotals(amount);
-  el.previewPrincipal.textContent = currency(principal);
-  el.previewFee.textContent = currency(fee);
-  el.previewTotal.textContent = currency(total);
-  el.previewDueDate.textContent = formatDate(addDaysISO(new Date(), TERM_DAYS));
-}
-
-el.calcAmount.addEventListener('input', (e) => updateCalculator(e.target.value));
-document.getElementById('amount').addEventListener('input', updatePreview);
-updateCalculator(el.calcAmount.value);
-updatePreview();
-
-el.prefillSample.addEventListener('click', () => {
-  const demo = {
-    fullName: 'Tshepiso Ndlovu',
-    studentId: 'BAC20260201',
-    campus: 'Botswana Accountancy College',
-    yearOfStudy: '4',
-    phone: '71112233',
-    email: 'tshepiso@example.com',
-    amount: '1200',
-    purpose: 'Registration fees',
-    incomeSource: 'Allowance',
-    monthlyIncome: '2500',
-    guardianName: 'Lindiwe Ndlovu',
-    guardianPhone: '72223344',
-    notes: 'Needs a quick short-term advance.'
-  };
-  Object.entries(demo).forEach(([id, value]) => { document.getElementById(id).value = value; });
-  document.getElementById('consent').checked = true;
-  updatePreview();
-  showToast('Demo application filled.');
+document.querySelectorAll('[data-screen]').forEach(btn => {
+  btn.addEventListener('click', () => showScreen(btn.dataset.screen));
+});
+document.querySelectorAll('[data-target]').forEach(btn => {
+  btn.addEventListener('click', () => showScreen(btn.dataset.target));
 });
 
-function scoreApplication(app) {
-  let score = 0;
-  if (app.amount >= 300 && app.amount <= 2500) score += 30;
-  if (app.monthlyIncome >= app.repaymentTotal) score += 35;
-  if (app.monthlyIncome >= app.amount * 1.2) score += 15;
-  if (app.guardianPhone && app.guardianName) score += 10;
-  if (app.campus && app.studentId) score += 10;
-  return score;
+function updateSlider() {
+  const amount = Number(amountInput.value);
+  amountValue.textContent = `P${amount}`;
+  repaymentValue.textContent = `Repay P${computeRepayment(amount)}`;
 }
+amountInput?.addEventListener('input', updateSlider);
+updateSlider();
 
-function autoDecision(app) {
-  const score = scoreApplication(app);
-  if (score >= 70) {
-    return {
-      status: 'approved',
-      approvedAt: new Date().toISOString(),
-      dueDate: addDaysISO(new Date(), TERM_DAYS),
-      decisionReason: 'Meets demo affordability and completeness checks.'
-    };
-  }
-  return {
-    status: 'pending',
-    approvedAt: null,
-    dueDate: null,
-    decisionReason: 'Requires manual review in the admin dashboard.'
-  };
-}
-
-el.applicationForm.addEventListener('submit', (e) => {
+applicationForm?.addEventListener('submit', (e) => {
   e.preventDefault();
-  const formData = Object.fromEntries(new FormData(el.applicationForm).entries());
-  const { principal, fee, total } = computeTotals(formData.amount);
-
+  const form = new FormData(applicationForm);
+  const amount = Number(form.get('amount'));
+  const income = Number(form.get('income'));
+  const score = Math.max(45, Math.min(91, Math.round((income / Math.max(amount, 1)) * 28 + (amount <= 650 ? 38 : 20))));
+  const approved = score >= 62 && amount <= Math.max(350, income * 0.75);
   const app = {
-    id: safeId(),
-    fullName: formData.fullName.trim(),
-    studentId: formData.studentId.trim().toUpperCase(),
-    campus: formData.campus,
-    yearOfStudy: formData.yearOfStudy,
-    phone: formData.phone.trim(),
-    email: formData.email.trim(),
-    amount: principal,
-    purpose: formData.purpose,
-    incomeSource: formData.incomeSource,
-    monthlyIncome: Number(formData.monthlyIncome),
-    guardianName: formData.guardianName.trim(),
-    guardianPhone: formData.guardianPhone.trim(),
-    notes: formData.notes.trim(),
-    submittedAt: new Date().toISOString(),
-    repaymentTotal: total,
-    feeAmount: fee,
-    repaidAt: null
+    name: form.get('name'),
+    omang: form.get('omang'),
+    studentId: String(form.get('studentId')).trim(),
+    institution: form.get('institution'),
+    phone: form.get('phone'),
+    income,
+    amount,
+    term: form.get('term'),
+    purpose: form.get('purpose'),
+    status: approved ? 'approved' : 'review',
+    score,
+    wallet: approved ? amount : 0,
+    repaid: 0,
+    createdAt: 'Just now',
+    dueDate: futureDate(parseInt(String(form.get('term')), 10) || 21)
   };
 
-  Object.assign(app, autoDecision(app));
-  db.applications.unshift(app);
-  saveData(db);
-  el.applicationForm.reset();
-  updatePreview();
-  renderAdmin(el.adminSearch.value);
-  renderStudent(app.studentId);
-  el.lookupStudentId.value = app.studentId;
-  switchView('student');
-  showToast(`Application submitted. Status: ${app.status}.`);
+  const existingIndex = state.applications.findIndex(x => x.studentId.toLowerCase() === app.studentId.toLowerCase());
+  if (existingIndex >= 0) state.applications[existingIndex] = app;
+  else state.applications.unshift(app);
+  currentPortalStudentId = app.studentId;
+  saveState();
+  renderDecision(app);
+  renderAdmin();
+  renderPortal();
 });
 
-function renderStudent(studentId) {
-  const apps = db.applications.filter(app => app.studentId.toUpperCase() === studentId.toUpperCase());
-  if (!apps.length) {
-    el.studentEmpty.classList.remove('hidden');
-    el.studentDashboard.classList.add('hidden');
-    return;
-  }
-
-  const latest = apps[0];
-  const activeLoan = apps.find(a => a.status === 'approved');
-  const totalBorrowed = apps.filter(a => ['approved', 'repaid'].includes(a.status)).reduce((sum, a) => sum + a.amount, 0);
-  const totalDue = apps.filter(a => a.status === 'approved').reduce((sum, a) => sum + a.repaymentTotal, 0);
-
-  el.studentEmpty.classList.add('hidden');
-  el.studentDashboard.classList.remove('hidden');
-
-  el.studentSummaryCards.innerHTML = [
-    metricCard('Applications', apps.length),
-    metricCard('Total borrowed', currency(totalBorrowed)),
-    metricCard('Outstanding due', currency(totalDue)),
-    metricCard('Latest status', latest.status)
-  ].join('');
-
-  el.studentProfileDetails.innerHTML = [
-    ['Name', latest.fullName],
-    ['Student ID', latest.studentId],
-    ['Institution', latest.campus],
-    ['Year of study', latest.yearOfStudy],
-    ['Phone', latest.phone],
-    ['Email', latest.email]
-  ].map(([k, v]) => `<div class="detail-row"><span>${k}</span><strong>${v || '—'}</strong></div>`).join('');
-
-  if (activeLoan) {
-    el.activeLoanDetails.innerHTML = [
-      ['Principal', currency(activeLoan.amount)],
-      ['Fee', currency(activeLoan.feeAmount)],
-      ['Total due', currency(activeLoan.repaymentTotal)],
-      ['Due date', formatDate(activeLoan.dueDate)],
-      ['Purpose', activeLoan.purpose],
-      ['Status', badge(activeLoan.status)]
-    ].map(([k, v]) => `<div class="detail-row"><span>${k}</span><strong>${v}</strong></div>`).join('');
-    el.simulateRepaymentBtn.dataset.id = activeLoan.id;
-    el.simulateRepaymentBtn.disabled = false;
-  } else {
-    el.activeLoanDetails.innerHTML = `<div class="detail-row"><span>Active loan</span><strong>No current approved loan</strong></div>`;
-    el.simulateRepaymentBtn.dataset.id = '';
-    el.simulateRepaymentBtn.disabled = true;
-  }
-
-  el.studentHistoryBody.innerHTML = apps.map(app => `
-    <div class="history-card">
-      <strong>${currency(app.amount)}</strong>
-      <span>${app.purpose}</span>
-      <div>${badge(app.status)}</div>
-      <span>${formatDate(app.submittedAt)} · Repayment ${currency(app.repaymentTotal)}</span>
-    </div>
-  `).join('');
+function renderDecision(app) {
+  decisionCard.classList.remove('hidden');
+  const approved = app.status === 'approved';
+  document.getElementById('decisionBadge').textContent = approved ? 'Approved' : 'Manual review';
+  document.getElementById('decisionBadge').className = `tag ${approved ? 'approved' : 'neutral'}`;
+  document.getElementById('decisionName').textContent = app.name;
+  document.getElementById('decisionStudentId').textContent = app.studentId;
+  document.getElementById('decisionAmount').textContent = `P${app.amount}`;
+  document.getElementById('decisionRepayment').textContent = `P${computeRepayment(app.amount)}`;
+  document.getElementById('decisionScore').textContent = `${app.score}/100`;
+  document.getElementById('decisionReason').textContent = approved
+    ? 'Profile passed demo checks for affordability, amount requested, and verification completeness.'
+    : 'Profile has been sent to manual review to validate affordability and repayment readiness.';
 }
 
-function updateApplicationStatus(id, action) {
-  const app = db.applications.find(a => a.id === id);
-  if (!app) return;
-
-  if (action === 'approve') {
-    app.status = 'approved';
-    app.approvedAt = new Date().toISOString();
-    app.dueDate = addDaysISO(new Date(), TERM_DAYS);
-    app.decisionReason = 'Approved manually by admin demo.';
-  }
-  if (action === 'reject') {
-    app.status = 'rejected';
-    app.approvedAt = null;
-    app.dueDate = null;
-    app.decisionReason = 'Rejected manually by admin demo.';
-  }
-  if (action === 'repaid') {
-    app.status = 'repaid';
-    app.repaidAt = new Date().toISOString();
-    app.decisionReason = 'Marked repaid in demo.';
-  }
-  saveData(db);
+function formatStatus(status) {
+  return status === 'approved' ? 'Approved' : status === 'repaid' ? 'Repaid' : status === 'rejected' ? 'Rejected' : 'In review';
 }
 
-function renderAdmin(search = '') {
-  const apps = db.applications.filter(app => {
-    const hay = `${app.fullName} ${app.studentId} ${app.campus}`.toLowerCase();
-    return hay.includes(search.toLowerCase());
-  });
+function renderAdmin() {
+  const apps = state.applications;
+  const approved = apps.filter(a => a.status === 'approved');
+  const outstanding = approved.reduce((sum, a) => sum + Math.max(0, a.amount - (a.repaid || 0)), 0);
+  const expected = approved.reduce((sum, a) => sum + computeRepayment(a.amount), 0);
 
-  const approved = db.applications.filter(a => a.status === 'approved');
-  const pending = db.applications.filter(a => a.status === 'pending');
-  const rejected = db.applications.filter(a => a.status === 'rejected');
-  const repaid = db.applications.filter(a => a.status === 'repaid');
-  const totalDisbursed = approved.concat(repaid).reduce((sum, a) => sum + a.amount, 0);
-  const expectedRepayments = approved.concat(repaid).reduce((sum, a) => sum + a.repaymentTotal, 0);
+  document.getElementById('metricApplications').textContent = apps.length;
+  document.getElementById('metricApproved').textContent = approved.length;
+  document.getElementById('metricOutstanding').textContent = `P${outstanding}`;
+  document.getElementById('metricExpected').textContent = `P${expected}`;
 
-  el.adminMetrics.innerHTML = [
-    metricCard('Total applications', db.applications.length),
-    metricCard('Pending review', pending.length),
-    metricCard('Active approved', approved.length),
-    metricCard('Expected repayments', currency(expectedRepayments))
-  ].join('');
-
-  el.portfolioBreakdown.innerHTML = [
-    ['Total principal issued', currency(totalDisbursed)],
-    ['Projected fee income', currency(expectedRepayments - totalDisbursed)],
-    ['Repaid loans', repaid.length],
-    ['Rejected applications', rejected.length]
-  ].map(([k, v]) => `<div class="stack-item"><strong>${k}</strong><div>${v}</div></div>`).join('');
-
-  el.recentActivity.innerHTML = [...db.applications].slice(0, 5).map(app => `
-    <div class="stack-item">
-      <strong>${app.fullName}</strong>
-      <div>${app.studentId} · ${currency(app.amount)}</div>
-      <div>${formatDate(app.submittedAt)} · ${app.status}</div>
-    </div>
-  `).join('');
-
-  el.applicationCards.innerHTML = apps.map(app => `
-    <article class="app-card">
-      <div class="app-card-head">
+  adminList.innerHTML = apps.map(app => `
+    <article class="admin-item">
+      <div class="admin-item-top">
         <div>
-          <strong>${app.fullName}</strong>
-          <p>${app.studentId} · ${app.campus}</p>
+          <strong>${app.name}</strong>
+          <small>${app.studentId} · ${app.institution}</small>
         </div>
-        ${badge(app.status)}
+        <span class="tag ${app.status === 'approved' ? 'approved' : 'neutral'}">${formatStatus(app.status)}</span>
       </div>
-      <div class="app-card-body">
-        <div class="detail-row"><span>Requested</span><strong>${currency(app.amount)}</strong></div>
-        <div class="detail-row"><span>Total repayment</span><strong>${currency(app.repaymentTotal)}</strong></div>
-        <div class="detail-row"><span>Submitted</span><strong>${formatDate(app.submittedAt)}</strong></div>
-        <div class="detail-row"><span>Decision note</span><strong>${app.decisionReason || '—'}</strong></div>
+      <div class="admin-meta">
+        <div><span class="mini-label">Amount</span><strong>P${app.amount}</strong></div>
+        <div><span class="mini-label">Repayment</span><strong>P${computeRepayment(app.amount)}</strong></div>
+        <div><span class="mini-label">Risk score</span><strong>${app.score}/100</strong></div>
+        <div><span class="mini-label">Due date</span><strong>${app.dueDate}</strong></div>
       </div>
-      <div class="app-card-foot">
-        <div class="actions-row">
-          ${app.status === 'pending' ? `
-            <button class="small-btn approve" data-action="approve" data-id="${app.id}">Approve</button>
-            <button class="small-btn reject" data-action="reject" data-id="${app.id}">Reject</button>
-          ` : ''}
-          ${app.status === 'approved' ? `<button class="small-btn repay" data-action="repaid" data-id="${app.id}">Mark repaid</button>` : ''}
-        </div>
-        <button class="small-btn" data-action="viewStudent" data-id="${app.studentId}">Open student</button>
+      <div class="admin-actions">
+        <button class="btn-success" onclick="updateApplication('${app.studentId}', 'approved')">Approve</button>
+        <button class="btn-warning" onclick="updateApplication('${app.studentId}', 'review')">Review</button>
+        <button class="btn-danger" onclick="markRepaid('${app.studentId}')">Mark repaid</button>
       </div>
     </article>
   `).join('');
 }
 
-el.loadStudentBtn.addEventListener('click', () => {
-  const id = el.lookupStudentId.value.trim();
-  if (!id) return showToast('Enter a student ID first.');
-  renderStudent(id);
-});
-
-el.simulateRepaymentBtn.addEventListener('click', () => {
-  const id = el.simulateRepaymentBtn.dataset.id;
-  if (!id) return;
-  updateApplicationStatus(id, 'repaid');
-  const app = db.applications.find(a => a.id === id);
-  renderStudent(app.studentId);
-  renderAdmin(el.adminSearch.value);
-  showToast('Repayment recorded in demo mode.');
-});
-
-el.adminSearch.addEventListener('input', (e) => renderAdmin(e.target.value));
-el.seedDemoDataBtn.addEventListener('click', () => {
-  db = sampleData();
-  saveData(db);
+window.updateApplication = function(studentId, status) {
+  state.applications = state.applications.map(app => app.studentId === studentId ? { ...app, status, wallet: status === 'approved' ? app.amount : 0 } : app);
+  saveState();
   renderAdmin();
-  renderStudent('UB20260091');
-  el.lookupStudentId.value = 'UB20260091';
-  showToast('Demo data reset.');
-});
-el.clearDataBtn.addEventListener('click', () => {
-  db = { applications: [] };
-  saveData(db);
+  renderPortal();
+};
+
+window.markRepaid = function(studentId) {
+  state.applications = state.applications.map(app => app.studentId === studentId ? { ...app, status: 'repaid', repaid: app.amount, wallet: 0 } : app);
+  saveState();
   renderAdmin();
-  el.studentEmpty.classList.remove('hidden');
-  el.studentDashboard.classList.add('hidden');
-  showToast('All demo data cleared.');
+  renderPortal();
+};
+
+function renderPortal() {
+  const input = document.getElementById('portalLookup');
+  if (input && !input.value) input.value = currentPortalStudentId;
+  const studentId = (input?.value || currentPortalStudentId || '').trim().toLowerCase();
+  const app = state.applications.find(x => x.studentId.toLowerCase() === studentId) || state.applications[0];
+  if (!app) return;
+  currentPortalStudentId = app.studentId;
+  document.getElementById('portalName').textContent = app.name;
+  document.getElementById('portalHandle').textContent = `@${app.studentId.toLowerCase()}`;
+  document.getElementById('walletBalance').textContent = `P${app.wallet || 0}`;
+  document.getElementById('currentLoan').textContent = `P${app.status === 'approved' ? app.amount : 0}`;
+  document.getElementById('amountDue').textContent = `P${app.status === 'approved' ? computeRepayment(app.amount) - (app.repaid || 0) : 0}`;
+  document.getElementById('portalStatus').textContent = formatStatus(app.status);
+  document.getElementById('dueDate').textContent = app.dueDate;
+
+  let progress = 0;
+  if (app.status === 'approved') progress = Math.min(100, Math.round(((app.repaid || 0) / computeRepayment(app.amount)) * 100));
+  if (app.status === 'repaid') progress = 100;
+  document.getElementById('progressFill').style.width = `${progress}%`;
+  document.getElementById('collectionStage').textContent = app.status === 'repaid' ? 'Closed' : app.status === 'approved' ? 'Pre-due reminder' : app.status === 'review' ? 'Awaiting review' : 'Closed';
+
+  document.getElementById('portalTimeline').innerHTML = [
+    `Application submitted · ${app.createdAt}`,
+    `KYC checks completed for ${app.institution}`,
+    app.status === 'approved' ? `Loan approved and P${app.amount} moved to Campus Wallet` : `Application flagged for manual review`,
+    `Repayment target: P${computeRepayment(app.amount)} by ${app.dueDate}`
+  ].map(item => `<li>${item}</li>`).join('');
+}
+
+document.getElementById('lookupBtn')?.addEventListener('click', renderPortal);
+document.getElementById('portalLookup')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); renderPortal(); }
 });
 
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-action]');
-  if (!btn) return;
-  const action = btn.dataset.action;
-  const id = btn.dataset.id;
-
-  if (action === 'viewStudent') {
-    el.lookupStudentId.value = id;
-    renderStudent(id);
-    switchView('student');
-    return;
-  }
-
-  updateApplicationStatus(id, action);
-  renderAdmin(el.adminSearch.value);
-  const app = db.applications.find(a => a.id === id);
-  if (app) renderStudent(app.studentId);
-  showToast(`Application updated: ${action}.`);
-});
+const tourBtn = document.getElementById('tourBtn');
+const tourModal = document.getElementById('tourModal');
+const closeTour = document.getElementById('closeTour');
+tourBtn?.addEventListener('click', () => tourModal.classList.remove('hidden'));
+closeTour?.addEventListener('click', () => tourModal.classList.add('hidden'));
+tourModal?.addEventListener('click', (e) => { if (e.target === tourModal) tourModal.classList.add('hidden'); });
 
 renderAdmin();
-renderStudent('UB20260091');
-el.lookupStudentId.value = 'UB20260091';
-switchView('home');
+renderPortal();
+showScreen('home');

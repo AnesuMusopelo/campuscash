@@ -1,346 +1,331 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Campus Cash Botswana — Mobile Demo</title>
-  <meta name="description" content="Campus Cash Botswana mobile-first demo for 30-day student loans with a 25% fee." />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Campus Cash — Investor Demo</title>
+  <meta name="description" content="Investor demo for Campus Cash, a Botswana-focused student micro-lending app." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="page-bg"></div>
-  <div class="device-shell">
-    <div class="device-frame">
-      <header class="app-header">
-        <div>
-          <p class="eyebrow">Botswana student finance demo</p>
-          <h1>Campus Cash</h1>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Botswana student finance</div>
+        <h1>Campus Cash</h1>
+      </div>
+      <button class="icon-btn" id="tourBtn" aria-label="Open investor walkthrough">★</button>
+    </header>
+
+    <main class="screens">
+      <section class="screen active" id="screen-home">
+        <div class="hero-card gradient-card">
+          <div class="hero-badge">Investor Demo</div>
+          <h2>Fast emergency loans for students in Botswana.</h2>
+          <p>Short-term credit, digital application, instant scoring, wallet disbursement, and repayment tracking.</p>
+          <div class="hero-cta-row">
+            <button class="primary-btn" data-target="apply">Try application</button>
+            <button class="ghost-btn" data-target="investor">See metrics</button>
+          </div>
         </div>
-        <button class="icon-btn" id="openMenuBtn" aria-label="Open quick actions">⋯</button>
-      </header>
 
-      <main class="screen-area">
-        <section id="home" class="screen active">
-          <div class="hero-card gradient-card">
-            <div class="hero-copy">
-              <span class="chip light">30-day loans · 25% fee</span>
-              <h2>Cash support for students when the month is too long.</h2>
-              <p>Apply in minutes, estimate your repayment, track your status, and view your due date in one clean mobile experience.</p>
-            </div>
-            <div class="hero-stats">
-              <div class="mini-stat"><strong>BWP 300–2,500</strong><span>Loan range</span></div>
-              <div class="mini-stat"><strong>Same-day</strong><span>Demo decision</span></div>
-              <div class="mini-stat"><strong>Local</strong><span>Botswana-focused</span></div>
-            </div>
-          </div>
+        <div class="stat-grid">
+          <article class="stat-card">
+            <span>Loan size</span>
+            <strong>P200 – P1,000</strong>
+          </article>
+          <article class="stat-card">
+            <span>Loan term</span>
+            <strong>14 – 30 days</strong>
+          </article>
+          <article class="stat-card">
+            <span>Pricing</span>
+            <strong>25%</strong>
+          </article>
+          <article class="stat-card">
+            <span>Decision time</span>
+            <strong>&lt; 3 min</strong>
+          </article>
+        </div>
 
-          <div class="stories-row">
-            <button class="story story-add" data-jump="apply"><span>+</span><small>Apply</small></button>
-            <div class="story"><div class="story-ring"><span>UB</span></div><small>University</small></div>
-            <div class="story"><div class="story-ring"><span>BAC</span></div><small>BAC</small></div>
-            <div class="story"><div class="story-ring"><span>BU</span></div><small>Botho</small></div>
-            <div class="story"><div class="story-ring"><span>BW</span></div><small>Botswana</small></div>
-          </div>
-
-          <div class="section-title-row">
-            <h3>Quick calculator</h3>
-            <button class="text-action" data-jump="apply">Apply</button>
-          </div>
-
-          <div class="panel-card calculator-card">
-            <label for="calcAmount" class="field-label">Loan amount</label>
-            <div class="range-head">
-              <strong id="calcAmountValue">BWP 1,000</strong>
-              <span>30 days</span>
-            </div>
-            <input id="calcAmount" type="range" min="300" max="2500" step="50" value="1000" />
-            <div class="summary-stack">
-              <div><span>Principal</span><strong id="principalValue">BWP 1,000</strong></div>
-              <div><span>Fee</span><strong id="feeValue">BWP 250</strong></div>
-              <div class="accent"><span>Total repayment</span><strong id="repaymentValue">BWP 1,250</strong></div>
-            </div>
-          </div>
-
-          <div class="section-title-row">
+        <section class="card">
+          <div class="section-head">
             <h3>How it works</h3>
           </div>
-
-          <div class="content-grid two-up">
-            <article class="panel-card compact">
-              <div class="icon-tile">1</div>
-              <h4>Apply</h4>
-              <p>Tell us your school, amount needed, and how you plan to repay.</p>
-            </article>
-            <article class="panel-card compact">
-              <div class="icon-tile">2</div>
-              <h4>Review</h4>
-              <p>The demo engine checks affordability and completeness instantly.</p>
-            </article>
-            <article class="panel-card compact">
-              <div class="icon-tile">3</div>
-              <h4>Track</h4>
-              <p>Students can check status and due dates in the student portal.</p>
-            </article>
-            <article class="panel-card compact">
-              <div class="icon-tile">4</div>
-              <h4>Manage</h4>
-              <p>Admins can review applications and mark loans as repaid.</p>
-            </article>
-          </div>
-
-          <div class="panel-card note-card">
-            <strong>Demo only.</strong>
-            <p>This app is for concept validation and presentations. It does not issue real loans or process real payments.</p>
+          <div class="timeline">
+            <div class="timeline-item"><span>1</span><div><strong>Student applies</strong><p>Omang, student ID, school, phone number, amount, and reason.</p></div></div>
+            <div class="timeline-item"><span>2</span><div><strong>System scores risk</strong><p>Affordability, repayment history, and verification checks.</p></div></div>
+            <div class="timeline-item"><span>3</span><div><strong>Loan is disbursed</strong><p>Funds move to a digital wallet or partner payout rail.</p></div></div>
+            <div class="timeline-item"><span>4</span><div><strong>Repayment tracked</strong><p>Reminders, penalties, collections workflow, and credit-building.</p></div></div>
           </div>
         </section>
 
-        <section id="apply" class="screen">
-          <div class="hero-mini">
-            <h2>Apply for a loan</h2>
-            <p>Mobile-first form inspired by social-app flows, but built for Campus Cash.</p>
+        <section class="card">
+          <div class="section-head">
+            <h3>Target market</h3>
           </div>
+          <div class="pill-row">
+            <span class="pill">University of Botswana</span>
+            <span class="pill">BAC</span>
+            <span class="pill">BIUST</span>
+            <span class="pill">18–26 years</span>
+          </div>
+          <p class="muted">Designed for short-term needs like transport, food, emergency accommodation, study materials, and exam-period cashflow gaps.</p>
+        </section>
+      </section>
 
-          <form id="applicationForm" class="form-stack">
-            <div class="panel-card form-card">
-              <div class="field-group two-up">
-                <label class="field">
-                  <span>Full name</span>
-                  <input id="fullName" name="fullName" required placeholder="Kabelo Dube" />
-                </label>
-                <label class="field">
-                  <span>Student ID</span>
-                  <input id="studentId" name="studentId" required placeholder="UB20260091" />
-                </label>
-              </div>
-
-              <div class="field-group two-up">
-                <label class="field">
-                  <span>Institution</span>
-                  <select id="campus" name="campus" required>
-                    <option value="">Select institution</option>
-                    <option>University of Botswana</option>
-                    <option>Botswana Accountancy College</option>
-                    <option>Botho University</option>
-                    <option>Limkokwing University Botswana</option>
-                    <option>BA ISAGO University</option>
-                    <option>Other</option>
-                  </select>
-                </label>
-                <label class="field">
-                  <span>Year of study</span>
-                  <select id="yearOfStudy" name="yearOfStudy" required>
-                    <option value="">Select year</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5+</option>
-                  </select>
-                </label>
-              </div>
-
-              <div class="field-group two-up">
-                <label class="field">
-                  <span>Phone number</span>
-                  <input id="phone" name="phone" required placeholder="71234567" />
-                </label>
-                <label class="field">
-                  <span>Email</span>
-                  <input id="email" name="email" type="email" required placeholder="name@email.com" />
-                </label>
-              </div>
-
-              <div class="field-group two-up">
-                <label class="field">
-                  <span>Requested amount (BWP)</span>
-                  <input id="amount" name="amount" type="number" min="300" max="2500" step="50" value="1000" required />
-                </label>
-                <label class="field">
-                  <span>Purpose</span>
-                  <select id="purpose" name="purpose" required>
-                    <option value="">Select purpose</option>
-                    <option>Transport</option>
-                    <option>Food & essentials</option>
-                    <option>Registration fees</option>
-                    <option>Accommodation shortfall</option>
-                    <option>Learning materials</option>
-                    <option>Emergency expense</option>
-                  </select>
-                </label>
-              </div>
-
-              <div class="field-group two-up">
-                <label class="field">
-                  <span>Income source</span>
-                  <select id="incomeSource" name="incomeSource" required>
-                    <option value="">Select income source</option>
-                    <option>Allowance</option>
-                    <option>Part-time work</option>
-                    <option>Parent/guardian support</option>
-                    <option>Sponsorship or stipend</option>
-                  </select>
-                </label>
-                <label class="field">
-                  <span>Monthly income/support</span>
-                  <input id="monthlyIncome" name="monthlyIncome" type="number" min="0" step="50" required placeholder="1800" />
-                </label>
-              </div>
-
-              <div class="field-group two-up">
-                <label class="field">
-                  <span>Guardian / emergency contact</span>
-                  <input id="guardianName" name="guardianName" required placeholder="Neo Dube" />
-                </label>
-                <label class="field">
-                  <span>Guardian phone</span>
-                  <input id="guardianPhone" name="guardianPhone" required placeholder="72123456" />
-                </label>
-              </div>
-
-              <label class="field">
-                <span>Notes</span>
-                <textarea id="notes" name="notes" rows="4" placeholder="Any extra context about the loan need"></textarea>
-              </label>
-
-              <label class="checkbox-pill">
-                <input id="consent" name="consent" type="checkbox" required />
-                <span>I understand this is a demo experience and not a real credit facility.</span>
-              </label>
-
-              <div class="button-row sticky-actions">
-                <button class="primary-btn" type="submit">Submit application</button>
-                <button class="secondary-btn" type="button" id="prefillSample">Prefill demo data</button>
-              </div>
-            </div>
-
-            <aside class="panel-card preview-card">
-              <div class="section-title-row">
-                <h3>Repayment preview</h3>
-                <span class="chip">30 days</span>
-              </div>
-              <div class="summary-stack large">
-                <div><span>Requested amount</span><strong id="previewPrincipal">BWP 1,000</strong></div>
-                <div><span>Fee (25%)</span><strong id="previewFee">BWP 250</strong></div>
-                <div class="accent"><span>Total due</span><strong id="previewTotal">BWP 1,250</strong></div>
-                <div><span>Estimated due date</span><strong id="previewDueDate">—</strong></div>
-              </div>
-            </aside>
+      <section class="screen" id="screen-apply">
+        <section class="card">
+          <div class="section-head">
+            <h3>Loan application</h3>
+            <span class="tag">Mobile-first flow</span>
+          </div>
+          <form id="applicationForm" class="form-grid">
+            <label>
+              <span>Full name</span>
+              <input required name="name" placeholder="Tumelo Modipane" />
+            </label>
+            <label>
+              <span>Omang / ID</span>
+              <input required name="omang" placeholder="123456789" />
+            </label>
+            <label>
+              <span>Student ID</span>
+              <input required name="studentId" placeholder="UB20260091" />
+            </label>
+            <label>
+              <span>Institution</span>
+              <select name="institution" required>
+                <option value="">Select institution</option>
+                <option>University of Botswana</option>
+                <option>Botswana Accountancy College</option>
+                <option>BIUST</option>
+                <option>Botho University</option>
+              </select>
+            </label>
+            <label>
+              <span>Phone number</span>
+              <input required name="phone" placeholder="71 234 567" />
+            </label>
+            <label>
+              <span>Monthly allowance / income</span>
+              <input required name="income" type="number" min="0" placeholder="1200" />
+            </label>
+            <label>
+              <span>Loan amount (Pula)</span>
+              <input required name="amount" type="range" min="200" max="1000" step="50" value="600" />
+              <div class="range-readout"><strong id="amountValue">P600</strong><span id="repaymentValue">Repay P750</span></div>
+            </label>
+            <label>
+              <span>Loan term</span>
+              <select name="term" required>
+                <option>14 days</option>
+                <option selected>21 days</option>
+                <option>30 days</option>
+              </select>
+            </label>
+            <label class="full">
+              <span>Why do you need the money?</span>
+              <textarea name="purpose" rows="3" placeholder="Transport, food, rent balance, study materials..."></textarea>
+            </label>
+            <label class="checkbox-row full">
+              <input type="checkbox" name="consent" required />
+              <span>I consent to KYC verification, credit assessment, and digital reminders.</span>
+            </label>
+            <button class="primary-btn full" type="submit">Submit demo application</button>
           </form>
         </section>
 
-        <section id="student" class="screen">
-          <div class="profile-hero panel-card">
-            <div class="profile-cover"></div>
-            <div class="profile-avatar">CC</div>
-            <div class="profile-copy">
-              <h2>Student portal</h2>
-              <p>Enter your student ID to check your latest Campus Cash application.</p>
+        <section class="card hidden" id="decisionCard">
+          <div class="section-head">
+            <h3>Decision result</h3>
+            <span class="tag approved" id="decisionBadge">Approved</span>
+          </div>
+          <div class="decision-grid">
+            <div>
+              <span class="mini-label">Applicant</span>
+              <strong id="decisionName">—</strong>
             </div>
-            <div class="lookup-row">
-              <input id="lookupStudentId" placeholder="Enter student ID" />
-              <button class="primary-btn" id="loadStudentBtn" type="button">Open</button>
+            <div>
+              <span class="mini-label">Student ID</span>
+              <strong id="decisionStudentId">—</strong>
+            </div>
+            <div>
+              <span class="mini-label">Approved amount</span>
+              <strong id="decisionAmount">—</strong>
+            </div>
+            <div>
+              <span class="mini-label">Repayment due</span>
+              <strong id="decisionRepayment">—</strong>
+            </div>
+            <div>
+              <span class="mini-label">Demo risk score</span>
+              <strong id="decisionScore">—</strong>
+            </div>
+            <div>
+              <span class="mini-label">Disbursement</span>
+              <strong>Campus Wallet</strong>
             </div>
           </div>
-
-          <div id="studentEmpty" class="panel-card empty-card">
-            <h3>No student loaded</h3>
-            <p>Try demo IDs like <strong>UB20260091</strong> or <strong>BAC20260119</strong>.</p>
+          <p class="muted" id="decisionReason">Your profile meets our demo approval threshold.</p>
+          <div class="hero-cta-row">
+            <button class="primary-btn" data-target="portal">Open borrower portal</button>
+            <button class="ghost-btn" data-target="admin">Show admin view</button>
           </div>
+        </section>
+      </section>
 
-          <div id="studentDashboard" class="dashboard-stack hidden">
-            <div id="studentSummaryCards" class="content-grid two-up"></div>
-
-            <div class="panel-card">
-              <div class="section-title-row"><h3>Student profile</h3></div>
-              <div id="studentProfileDetails" class="detail-list"></div>
-            </div>
-
-            <div class="panel-card">
-              <div class="section-title-row">
-                <h3>Active loan</h3>
-                <button id="simulateRepaymentBtn" class="secondary-btn" type="button">Mark repaid</button>
-              </div>
-              <div id="activeLoanDetails" class="detail-list"></div>
-            </div>
-
-            <div class="panel-card">
-              <div class="section-title-row"><h3>History</h3></div>
-              <div class="history-cards" id="studentHistoryBody"></div>
-            </div>
+      <section class="screen" id="screen-portal">
+        <section class="profile-card">
+          <div class="profile-banner"></div>
+          <div class="avatar">CC</div>
+          <h3 id="portalName">Demo Student</h3>
+          <p id="portalHandle">@borrower</p>
+          <div class="pill-row center">
+            <span class="pill">Verified student</span>
+            <span class="pill">KYC complete</span>
+            <span class="pill">Wallet active</span>
           </div>
         </section>
 
-        <section id="admin" class="screen">
-          <div class="hero-mini">
-            <h2>Admin dashboard</h2>
-            <p>Portfolio summary, application review, and quick actions.</p>
+        <section class="card">
+          <div class="section-head">
+            <h3>Find borrower</h3>
           </div>
-
-          <div id="adminMetrics" class="content-grid two-up"></div>
-
-          <div class="content-grid two-up">
-            <div class="panel-card">
-              <div class="section-title-row"><h3>Portfolio breakdown</h3></div>
-              <div id="portfolioBreakdown" class="stack-list"></div>
-            </div>
-            <div class="panel-card">
-              <div class="section-title-row"><h3>Recent activity</h3></div>
-              <div id="recentActivity" class="stack-list"></div>
-            </div>
-          </div>
-
-          <div class="panel-card">
-            <div class="section-title-row wrap">
-              <h3>Applications</h3>
-              <div class="admin-tools">
-                <input id="adminSearch" placeholder="Search name, ID, campus" />
-                <button class="secondary-btn" id="seedDemoDataBtn" type="button">Reset demo</button>
-                <button class="ghost-btn" id="clearDataBtn" type="button">Clear all</button>
-              </div>
-            </div>
-            <div id="applicationCards" class="application-cards"></div>
+          <div class="lookup-row">
+            <input id="portalLookup" placeholder="Enter student ID e.g. UB20260091" />
+            <button class="primary-btn compact" id="lookupBtn">Load</button>
           </div>
         </section>
 
-        <section id="faq" class="screen">
-          <div class="hero-mini">
-            <h2>FAQ</h2>
-            <p>Helpful answers for demo presentations and concept walkthroughs.</p>
-          </div>
+        <section class="metrics-row">
+          <article class="metric-card">
+            <span>Wallet balance</span>
+            <strong id="walletBalance">P0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Current loan</span>
+            <strong id="currentLoan">P0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Amount due</span>
+            <strong id="amountDue">P0</strong>
+          </article>
+        </section>
 
-          <div class="faq-stack">
-            <article class="panel-card"><h3>What does Campus Cash offer?</h3><p>A 30-day student micro-loan concept for Botswana with a flat 25% fee.</p></article>
-            <article class="panel-card"><h3>Is this a real lender?</h3><p>No. This is a front-end prototype for showcasing product design and user journeys.</p></article>
-            <article class="panel-card"><h3>How are decisions made?</h3><p>The demo uses simple affordability and completeness checks, with manual admin review available.</p></article>
-            <article class="panel-card"><h3>Can it work on mobile?</h3><p>Yes. This redesign is deliberately mobile-first and also scales up cleanly on desktop browsers.</p></article>
+        <section class="card">
+          <div class="section-head">
+            <h3>Repayment progress</h3>
+            <span class="tag neutral" id="portalStatus">No active loan</span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="repayment-grid">
+            <div><span class="mini-label">Due date</span><strong id="dueDate">—</strong></div>
+            <div><span class="mini-label">Collection stage</span><strong id="collectionStage">Pre-due reminder</strong></div>
           </div>
         </section>
-      </main>
 
-      <nav class="bottom-nav">
-        <button class="nav-item active" data-view="home"><span>⌂</span><small>Home</small></button>
-        <button class="nav-item" data-view="apply"><span>✎</span><small>Apply</small></button>
-        <button class="nav-item nav-item-center" data-view="student"><span>●</span><small>Portal</small></button>
-        <button class="nav-item" data-view="admin"><span>▣</span><small>Admin</small></button>
-        <button class="nav-item" data-view="faq"><span>?</span><small>FAQ</small></button>
-      </nav>
+        <section class="card">
+          <div class="section-head">
+            <h3>Timeline</h3>
+          </div>
+          <ul class="activity-list" id="portalTimeline"></ul>
+        </section>
+      </section>
+
+      <section class="screen" id="screen-admin">
+        <section class="card">
+          <div class="section-head">
+            <h3>Portfolio dashboard</h3>
+            <span class="tag">Operations</span>
+          </div>
+          <div class="stat-grid admin-grid">
+            <article class="stat-card"><span>Applications</span><strong id="metricApplications">0</strong></article>
+            <article class="stat-card"><span>Approved</span><strong id="metricApproved">0</strong></article>
+            <article class="stat-card"><span>Outstanding</span><strong id="metricOutstanding">P0</strong></article>
+            <article class="stat-card"><span>Expected repayment</span><strong id="metricExpected">P0</strong></article>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <h3>Live application queue</h3>
+            <span class="tag">Demo data</span>
+          </div>
+          <div id="adminList" class="admin-list"></div>
+        </section>
+      </section>
+
+      <section class="screen" id="screen-investor">
+        <section class="card gradient-card investor-hero">
+          <div class="section-head no-border">
+            <h3>Why this can scale</h3>
+          </div>
+          <p>Campus Cash serves an underbanked youth market with high-frequency small-ticket demand, digital-first underwriting, and repeat-loan economics.</p>
+        </section>
+
+        <section class="card">
+          <div class="section-head"><h3>Unit economics snapshot</h3></div>
+          <div class="decision-grid">
+            <div><span class="mini-label">Average ticket</span><strong>P650</strong></div>
+            <div><span class="mini-label">Average fee</span><strong>25%</strong></div>
+            <div><span class="mini-label">Average repayment</span><strong>P812.50</strong></div>
+            <div><span class="mini-label">Cycle time</span><strong>21 days</strong></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head"><h3>What investors are seeing in the demo</h3></div>
+          <div class="bullet-stack">
+            <div class="bullet-item">Student onboarding with KYC and institution capture</div>
+            <div class="bullet-item">Instant decisioning and progressive risk controls</div>
+            <div class="bullet-item">Digital disbursement through a wallet-style experience</div>
+            <div class="bullet-item">Collections and admin monitoring in one flow</div>
+            <div class="bullet-item">Roadmap to credit-building, savings, and youth financial products</div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head"><h3>Compliance and controls</h3></div>
+          <div class="pill-row">
+            <span class="pill">KYC verification</span>
+            <span class="pill">Risk-based lending</span>
+            <span class="pill">Transparent pricing</span>
+            <span class="pill">Structured collections</span>
+            <span class="pill">NBFIRA-aligned positioning</span>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-screen="home">Home</button>
+      <button class="nav-btn" data-screen="apply">Apply</button>
+      <button class="nav-btn nav-center" data-screen="portal">Portal</button>
+      <button class="nav-btn" data-screen="admin">Admin</button>
+      <button class="nav-btn" data-screen="investor">Investor</button>
+    </nav>
+  </div>
+
+  <div class="tour-modal hidden" id="tourModal">
+    <div class="tour-card">
+      <div class="section-head">
+        <h3>2-minute investor walkthrough</h3>
+        <button class="icon-btn" id="closeTour">×</button>
+      </div>
+      <ol>
+        <li>Open <strong>Apply</strong> and submit a sample student loan.</li>
+        <li>Show the instant approval and explain the 25% pricing.</li>
+        <li>Open <strong>Portal</strong> to show wallet, due date, and reminders.</li>
+        <li>Open <strong>Admin</strong> to show portfolio controls.</li>
+        <li>End on <strong>Investor</strong> for scale and compliance story.</li>
+      </ol>
     </div>
   </div>
 
-  <div id="quickSheet" class="quick-sheet hidden">
-    <div class="sheet-card">
-      <div class="section-title-row"><h3>Quick actions</h3><button class="icon-btn" id="closeMenuBtn">✕</button></div>
-      <button class="sheet-action" data-jump="apply">New application</button>
-      <button class="sheet-action" data-jump="student">Open student portal</button>
-      <button class="sheet-action" data-jump="admin">Review applications</button>
-      <button class="sheet-action" data-jump="faq">Read FAQ</button>
-    </div>
-  </div>
-
-  <div id="toast" class="toast hidden"></div>
   <script src="script.js"></script>
 </body>
 </html>
