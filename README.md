@@ -1,33 +1,34 @@
-# Campus Cash — Investor Demo
+# Campus Cash Student Demo
 
-A mobile-friendly static demo for pitching Campus Cash to investors.
+A mobile-first static demo of the **student side** of Campus Cash.
 
-## What this demo shows
-- Botswana-focused student micro-loans
-- 25% pricing
-- 14–30 day terms
-- digital application flow
-- instant decision simulation
-- borrower portal
-- admin dashboard
-- investor/compliance view
+## Included screens
+- Login / signup
+- Home dashboard
+- Loan application
+- Loan status tracking
+- Wallet
+- Repayment flow
+- Profile / feature overview
 
-## Publish free on GitHub Pages
-1. Create a new public GitHub repository.
-2. Upload all files from this folder to the root of the repository.
-3. On GitHub, open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select your main branch and `/ (root)`.
-6. Save.
-7. Your site will appear on a `github.io` link.
+## Demo interactions
+- Log in or sign up
+- Select a loan amount and submit an application
+- See approval and status updates
+- Simulate wallet disbursement
+- Simulate repayment
+- Data is stored in browser localStorage for demo continuity
 
-## Pitch flow suggestion
-1. Start on **Home**.
-2. Move to **Apply** and submit a sample loan.
-3. Show the decision result.
-4. Open **Portal** to show wallet and repayment experience.
-5. Open **Admin** to show risk and operations.
-6. End on **Investor** to explain scale and controls.
+## Deploy on GitHub Pages
+1. Create a public GitHub repository
+2. Upload `index.html`, `styles.css`, `script.js`, and `README.md`
+3. Go to **Settings > Pages**
+4. Choose **Deploy from a branch**
+5. Select your main branch and `/ (root)`
+6. Save and wait for the `github.io` link
 
-## Notes
-This is a front-end investor demo. It does not connect to a real database or payment provider.
+## Reset demo data
+Open the browser console and run:
+```js
+localStorage.removeItem('campusCashStudentDemo')
+```
