@@ -1,221 +1,283 @@
-const screens = document.querySelectorAll('.screen');
-const navButtons = document.querySelectorAll('.nav-btn');
-const navActions = document.querySelectorAll('.nav-action');
-const backButtons = document.querySelectorAll('.back-btn');
-const authTabs = document.querySelectorAll('[data-auth-tab]');
-const authViews = document.querySelectorAll('.auth-view');
-const amountPills = document.querySelectorAll('.amount-pill');
-const amountSlider = document.getElementById('amount-slider');
-const decisionCard = document.getElementById('decision-card');
-
-const defaultProfile = {
-  name: 'Nara Berry',
-  studentId: 'UB20260091',
-  school: 'University of Botswana',
-  amount: 0,
-  fee: 0,
-  total: 0,
-  dueDate: '—',
-  status: 'none',
-  walletBalance: 0,
-  activity: []
+const state = {
+  user: JSON.parse(localStorage.getItem("campusCashUser")) || {
+    name: "Neo Molefe",
+    studentId: "UB20260091",
+    school: "University of Botswana"
+  },
+  loan: JSON.parse(localStorage.getItem("campusCashLoan")) || {
+    amount: 0,
+    fee: 0,
+    total: 0,
+    days: 14,
+    reason: "Food & groceries",
+    income: 1500,
+    status: "ready",
+    dueDate: null,
+    walletBalance: 0,
+    outstanding: 0,
+    repaidFraction: 0
+  }
 };
 
-const state = JSON.parse(localStorage.getItem('campusCashStudentDemo') || 'null') || defaultProfile;
+const screens = [...document.querySelectorAll(".screen")];
+const nav = document.getElementById("bottomNav");
+const toast = document.getElementById("toast");
 
 function saveState() {
-  localStorage.setItem('campusCashStudentDemo', JSON.stringify(state));
+  localStorage.setItem("campusCashUser", JSON.stringify(state.user));
+  localStorage.setItem("campusCashLoan", JSON.stringify(state.loan));
 }
 
-function switchScreen(id) {
-  screens.forEach(screen => screen.classList.toggle('active', screen.id === id));
-  const bottomNav = document.getElementById('bottom-nav');
-  bottomNav.style.display = id === 'screen-auth' ? 'none' : 'grid';
-  navButtons.forEach(btn => {
-    const match = btn.dataset.target === id;
-    btn.classList.toggle('active', match);
+function formatMoney(value) {
+  return Number(value || 0).toLocaleString();
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function openScreen(id) {
+  screens.forEach(s => s.classList.toggle("active", s.id === id));
+  const authenticated = id !== "screen-auth";
+  nav.classList.toggle("hidden", !authenticated);
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.open === id);
   });
-  if (id === 'screen-status') updateTimeline();
-  if (id === 'screen-wallet') renderActivity();
+  if (id === "screen-auth") nav.classList.add("hidden");
 }
 
-function setAuthTab(tab) {
-  authTabs.forEach(btn => btn.classList.toggle('active', btn.dataset.authTab === tab));
-  authViews.forEach(view => view.classList.toggle('active', view.id === `auth-${tab}`));
-}
-
-authTabs.forEach(btn => btn.addEventListener('click', () => setAuthTab(btn.dataset.authTab)));
-navButtons.forEach(btn => btn.addEventListener('click', () => switchScreen(btn.dataset.target)));
-navActions.forEach(btn => btn.addEventListener('click', () => switchScreen(btn.dataset.target)));
-backButtons.forEach(btn => btn.addEventListener('click', () => switchScreen(btn.dataset.back)));
-
-document.getElementById('login-btn').addEventListener('click', () => {
-  const identifier = document.getElementById('login-identifier').value.trim();
-  if (identifier) state.studentId = identifier;
-  syncUI();
-  switchScreen('screen-home');
+document.querySelectorAll("[data-open]").forEach(btn => {
+  btn.addEventListener("click", () => openScreen(btn.dataset.open));
 });
 
-document.getElementById('signup-btn').addEventListener('click', () => {
-  state.name = document.getElementById('signup-name').value.trim() || 'New Student';
-  state.school = document.getElementById('signup-school').value;
-  state.studentId = document.getElementById('signup-student-id').value.trim() || `CC${Math.floor(100000 + Math.random() * 900000)}`;
-  state.activity = [];
-  state.amount = 0;
-  state.fee = 0;
-  state.total = 0;
-  state.dueDate = '—';
-  state.status = 'none';
-  state.walletBalance = 0;
+document.querySelectorAll("[data-auth-tab]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".seg").forEach(x => x.classList.remove("active"));
+    btn.classList.add("active");
+    const signup = btn.dataset.authTab === "signup";
+    document.getElementById("signupForm").classList.toggle("active", signup);
+    document.getElementById("loginForm").classList.toggle("active", !signup);
+  });
+});
+
+document.getElementById("loginForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const id = document.getElementById("loginStudentId").value.trim();
+  if (id) state.user.studentId = id;
   saveState();
-  syncUI();
-  switchScreen('screen-home');
+  hydrate();
+  openScreen("screen-home");
+  showToast("Logged in to demo account");
 });
 
-function currency(value) {
-  return `P ${Number(value).toLocaleString()}`;
-}
+document.getElementById("signupForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("signupName").value.trim() || "New Student";
+  const school = document.getElementById("signupSchool").value;
+  const studentId = document.getElementById("signupStudentId").value.trim() || "UB20260111";
+  state.user = { name, school, studentId };
+  state.loan = {
+    amount: 0, fee: 0, total: 0, days: 14, reason: "Food & groceries", income: 1500,
+    status: "ready", dueDate: null, walletBalance: 0, outstanding: 0, repaidFraction: 0
+  };
+  saveState();
+  hydrate();
+  openScreen("screen-home");
+  showToast("Demo account created");
+});
 
-function getDueDateLabel() {
-  const due = new Date();
-  due.setDate(due.getDate() + 30);
-  return due.toLocaleDateString('en-BW', { day: 'numeric', month: 'short', year: 'numeric' });
-}
+const amountInput = document.getElementById("loanAmount");
+const requestedValue = document.getElementById("requestedValue");
+const feeValue = document.getElementById("feeValue");
+const repaymentValue = document.getElementById("repaymentValue");
+let selectedDays = 14;
 
-function updateCalculator(amount) {
-  const fee = amount * 0.25;
+function updateLoanPreview() {
+  const amount = Number(amountInput.value);
+  const fee = Math.round(amount * 0.25);
   const total = amount + fee;
-  document.getElementById('selected-amount').textContent = currency(amount);
-  document.getElementById('selected-fee').textContent = currency(fee);
-  document.getElementById('selected-total').textContent = currency(total);
-  document.getElementById('selected-date').textContent = getDueDateLabel();
-  amountSlider.value = amount;
-  amountPills.forEach(p => p.classList.toggle('active', Number(p.dataset.amount) === Number(amount)));
+  requestedValue.textContent = formatMoney(amount);
+  feeValue.textContent = formatMoney(fee);
+  repaymentValue.textContent = formatMoney(total);
 }
+amountInput.addEventListener("input", updateLoanPreview);
+updateLoanPreview();
 
-amountPills.forEach(pill => pill.addEventListener('click', () => updateCalculator(Number(pill.dataset.amount))));
-amountSlider.addEventListener('input', e => updateCalculator(Number(e.target.value)));
+document.querySelectorAll(".term-chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".term-chip").forEach(x => x.classList.remove("active"));
+    btn.classList.add("active");
+    selectedDays = Number(btn.dataset.days);
+  });
+});
 
-function syncUI() {
-  document.getElementById('student-name-home').textContent = state.name;
-  document.getElementById('profile-name').textContent = state.name;
-  document.getElementById('profile-id').textContent = `@${state.studentId}`;
-  document.getElementById('profile-avatar').textContent = (state.name || 'S').charAt(0).toUpperCase();
-  document.getElementById('available-limit').textContent = state.status === 'active' ? 'P 0' : 'P 800';
-  document.getElementById('current-loan-short').textContent = currency(state.amount || 0);
-  document.getElementById('due-date-short').textContent = state.dueDate;
-  document.getElementById('summary-status').textContent = state.status === 'none' ? 'No active loan' : (state.status === 'repaid' ? 'Loan repaid' : 'Loan active');
-  document.getElementById('summary-repayment').textContent = currency(state.total || 0);
-  document.getElementById('status-amount').textContent = currency(state.amount || 0);
-  document.getElementById('status-fee').textContent = currency(state.fee || 0);
-  document.getElementById('status-total').textContent = currency(state.total || 0);
-  document.getElementById('status-date').textContent = state.dueDate;
-  document.getElementById('repay-outstanding').textContent = currency(state.total || 0);
-  document.getElementById('repay-date').textContent = state.dueDate;
-  document.getElementById('wallet-balance').textContent = currency(state.walletBalance || 0);
-  document.getElementById('decision-student-id').textContent = state.studentId;
-  document.getElementById('wallet-state').textContent = state.status === 'active' ? 'Funds available' : (state.status === 'repaid' ? 'Loan settled' : 'No disbursement yet');
+document.getElementById("submitApplication").addEventListener("click", () => {
+  const amount = Number(amountInput.value);
+  const fee = Math.round(amount * 0.25);
+  const total = amount + fee;
+  const income = Number(document.getElementById("incomeValue").value || 0);
+  const approved = income >= total * 1.2 && amount <= 800;
+  const due = new Date();
+  due.setDate(due.getDate() + selectedDays);
 
-  if (state.status === 'none') {
-    document.getElementById('status-badge').textContent = 'No active application';
-    document.getElementById('status-headline').textContent = 'You have no active loan yet';
-    document.getElementById('status-subtext').textContent = 'Apply to see your live journey here.';
-  } else if (state.status === 'active') {
-    document.getElementById('status-badge').textContent = 'Approved';
-    document.getElementById('status-headline').textContent = `${currency(state.amount)} has been approved`;
-    document.getElementById('status-subtext').textContent = `Repay ${currency(state.total)} by ${state.dueDate}.`;
-  } else if (state.status === 'repaid') {
-    document.getElementById('status-badge').textContent = 'Repaid';
-    document.getElementById('status-headline').textContent = 'Your last loan was settled';
-    document.getElementById('status-subtext').textContent = 'You can apply again when eligible.';
-  }
-
+  state.loan.amount = amount;
+  state.loan.fee = fee;
+  state.loan.total = total;
+  state.loan.days = selectedDays;
+  state.loan.reason = document.getElementById("loanReason").value;
+  state.loan.income = income;
+  state.loan.dueDate = due.toISOString();
+  state.loan.walletBalance = 0;
+  state.loan.outstanding = approved ? total : 0;
+  state.loan.repaidFraction = 0;
+  state.loan.status = approved ? "approved" : "declined";
   saveState();
-}
+  hydrate();
+  openScreen("screen-status");
+  showToast(approved ? "Loan approved in demo" : "Loan declined in demo");
+});
 
-function updateTimeline() {
-  ['t1','t2','t3','t4'].forEach(id => document.getElementById(id).classList.remove('active'));
-  if (state.status === 'none') return;
-  document.getElementById('t1').classList.add('active');
-  document.getElementById('t2').classList.add('active');
-  document.getElementById('t3').classList.add('active');
-  if (state.status === 'active' || state.status === 'repaid') {
-    document.getElementById('t4').classList.add('active');
-  }
-}
-
-function renderActivity() {
-  const list = document.getElementById('activity-list');
-  if (!state.activity.length) {
-    list.innerHTML = '<div class="empty-state">No transactions yet.</div>';
+document.getElementById("simulateDisbursement").addEventListener("click", () => {
+  if (state.loan.status !== "approved") {
+    showToast("Approve a demo loan first");
     return;
   }
-  list.innerHTML = state.activity.map(item => `
-    <div class="activity-item">
-      <div>
-        <strong>${item.title}</strong>
-        <small>${item.meta}</small>
-      </div>
-      <strong>${item.amount}</strong>
-    </div>
-  `).join('');
+  if (state.loan.walletBalance >= state.loan.amount) {
+    showToast("Funds already disbursed");
+    return;
+  }
+  state.loan.walletBalance = state.loan.amount;
+  state.loan.status = "funded";
+  saveState();
+  hydrate();
+  showToast("Wallet funded");
+});
+
+document.querySelectorAll(".repay-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (!["approved", "funded", "partial"].includes(state.loan.status)) {
+      showToast("No active loan to repay");
+      return;
+    }
+    const fraction = Number(btn.dataset.pay);
+    if (fraction === 1) {
+      state.loan.repaidFraction = 1;
+      state.loan.outstanding = 0;
+      state.loan.status = "repaid";
+    } else {
+      state.loan.repaidFraction = Math.max(state.loan.repaidFraction, 0.5);
+      state.loan.outstanding = Math.round(state.loan.total * 0.5);
+      state.loan.status = "partial";
+    }
+    saveState();
+    hydrate();
+    openScreen("screen-status");
+    showToast(state.loan.status === "repaid" ? "Loan fully repaid" : "50% repayment recorded");
+  });
+});
+
+function hydrate() {
+  const firstName = state.user.name.split(" ")[0] || state.user.name;
+  document.getElementById("welcomeName").textContent = firstName;
+  document.getElementById("profileName").textContent = state.user.name;
+  document.getElementById("profileHandle").textContent = "@" + state.user.studentId;
+  document.getElementById("avatarInitial").textContent = firstName.charAt(0).toUpperCase();
+  document.getElementById("eligibleAmount").textContent = state.loan.status === "repaid" || state.loan.status === "ready" ? "800" : "0";
+
+  const statusMap = {
+    ready: "Ready",
+    approved: "Approved",
+    funded: "Funded",
+    partial: "Part-paid",
+    repaid: "Repaid",
+    declined: "Declined"
+  };
+
+  const homeTitle = {
+    ready: "No active loan",
+    approved: `P${formatMoney(state.loan.total)} due`,
+    funded: `P${formatMoney(state.loan.total)} due`,
+    partial: `P${formatMoney(state.loan.outstanding)} left`,
+    repaid: "Loan settled",
+    declined: "Application declined"
+  };
+  document.getElementById("homeLoanState").textContent = homeTitle[state.loan.status];
+  document.getElementById("loanStatusPill").textContent = statusMap[state.loan.status];
+
+  const progressPct = state.loan.status === "repaid" ? 100 : state.loan.status === "partial" ? 50 : state.loan.status === "funded" || state.loan.status === "approved" ? 20 : 0;
+  document.getElementById("homeProgress").style.width = progressPct + "%";
+  document.getElementById("progressLeft").textContent = state.loan.status === "ready" ? "No repayment due"
+    : state.loan.status === "declined" ? "Not approved"
+    : state.loan.status === "repaid" ? "Loan completed"
+    : `Outstanding P${formatMoney(state.loan.outstanding || state.loan.total)}`;
+  document.getElementById("dueDateBadge").textContent = formatDate(state.loan.dueDate);
+
+  document.getElementById("statusLabel").textContent = statusMap[state.loan.status];
+  document.getElementById("statusAmount").textContent = "P" + formatMoney(state.loan.outstanding || 0);
+  document.getElementById("statusDue").textContent = formatDate(state.loan.dueDate);
+
+  const decisionStep = document.getElementById("stepDecision");
+  const walletStep = document.getElementById("stepWallet");
+  const repayStep = document.getElementById("stepRepay");
+  [decisionStep, walletStep, repayStep].forEach(el => { el.classList.remove("done", "active"); });
+
+  const decisionText = document.getElementById("decisionText");
+  const walletText = document.getElementById("walletText");
+  const repayText = document.getElementById("repayText");
+
+  if (state.loan.status === "ready") {
+    decisionText.textContent = "Pending until you submit an application.";
+    walletText.textContent = "No funds disbursed yet.";
+    repayText.textContent = "No repayment started.";
+  } else if (state.loan.status === "declined") {
+    decisionStep.classList.add("done");
+    decisionText.textContent = "Application declined based on affordability in this demo.";
+    walletText.textContent = "No disbursement.";
+    repayText.textContent = "No repayment required.";
+  } else {
+    decisionStep.classList.add("done");
+    decisionText.textContent = `Approved for P${formatMoney(state.loan.amount)} over ${state.loan.days} days.`;
+    if (state.loan.status === "approved") {
+      walletStep.classList.add("active");
+      walletText.textContent = "Ready to move funds into wallet.";
+      repayText.textContent = "Repayment opens after funding.";
+    }
+    if (state.loan.status === "funded") {
+      walletStep.classList.add("done");
+      walletText.textContent = `P${formatMoney(state.loan.walletBalance)} credited to wallet.`;
+      repayStep.classList.add("active");
+      repayText.textContent = `Outstanding balance P${formatMoney(state.loan.total)}.`;
+    }
+    if (state.loan.status === "partial") {
+      walletStep.classList.add("done");
+      repayStep.classList.add("done");
+      walletText.textContent = `P${formatMoney(state.loan.walletBalance)} credited to wallet.`;
+      repayText.textContent = `50% paid. Remaining P${formatMoney(state.loan.outstanding)}.`;
+    }
+    if (state.loan.status === "repaid") {
+      walletStep.classList.add("done");
+      repayStep.classList.add("done");
+      walletText.textContent = `P${formatMoney(state.loan.walletBalance)} credited to wallet.`;
+      repayText.textContent = "Loan fully repaid.";
+    }
+  }
+
+  document.getElementById("walletBalance").textContent = formatMoney(state.loan.walletBalance);
+  document.getElementById("lastTransfer").textContent = state.loan.walletBalance ? `P${formatMoney(state.loan.walletBalance)} received` : "No disbursement yet";
+  document.getElementById("outstandingAmount").textContent = "P" + formatMoney(state.loan.outstanding || 0);
+  const repayPct = Math.round((state.loan.repaidFraction || 0) * 100);
+  document.getElementById("repayProgressText").textContent = repayPct + "%";
+  document.getElementById("repayProgressBar").style.width = repayPct + "%";
 }
 
-document.getElementById('submit-application').addEventListener('click', () => {
-  const amount = Number(amountSlider.value);
-  const fee = amount * 0.25;
-  const total = amount + fee;
-  state.amount = amount;
-  state.fee = fee;
-  state.total = total;
-  state.dueDate = getDueDateLabel();
-  state.status = 'active';
-  state.school = document.getElementById('institution').value;
-  decisionCard.classList.remove('hidden');
-  document.getElementById('decision-amount').textContent = currency(amount);
-  document.getElementById('decision-total').textContent = currency(total);
-  document.getElementById('decision-text').textContent = `Your ${currency(amount)} demo loan is pre-approved for 30 days.`;
-  state.activity.unshift({
-    title: 'Application approved',
-    meta: `${state.school} • ${new Date().toLocaleDateString('en-BW')}`,
-    amount: currency(amount)
-  });
-  syncUI();
-});
-
-document.getElementById('simulate-disbursement').addEventListener('click', () => {
-  if (!state.amount || state.status !== 'active') return;
-  const alreadyDisbursed = state.activity.some(item => item.title === 'Wallet disbursement');
-  if (alreadyDisbursed) return;
-  state.walletBalance += state.amount;
-  state.activity.unshift({
-    title: 'Wallet disbursement',
-    meta: 'Campus Cash transfer completed',
-    amount: `+${currency(state.amount)}`
-  });
-  syncUI();
-  renderActivity();
-});
-
-document.getElementById('repay-now-btn').addEventListener('click', () => {
-  if (!state.total || state.status !== 'active') return;
-  state.walletBalance = Math.max(0, state.walletBalance - state.total);
-  state.activity.unshift({
-    title: 'Loan repayment',
-    meta: 'Demo repayment completed',
-    amount: `-${currency(state.total)}`
-  });
-  state.status = 'repaid';
-  syncUI();
-  renderActivity();
-  switchScreen('screen-status');
-});
-
-document.getElementById('notify-btn').addEventListener('click', () => {
-  alert('Demo reminder: your next repayment alert would appear here.');
-});
-
-updateCalculator(200);
-syncUI();
-renderActivity();
-switchScreen('screen-auth');
+hydrate();
+openScreen("screen-auth");

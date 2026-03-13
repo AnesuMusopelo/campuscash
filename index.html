@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Campus Cash Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Campus Cash — Student Demo</title>
+  <meta name="description" content="Campus Cash student lending app demo for Botswana students." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,339 +13,371 @@
 <body>
   <div class="app-shell">
     <div class="phone-frame">
-      <div class="screen active" id="screen-auth">
-        <div class="hero-card">
-          <div class="brand-row">
-            <div class="brand-mark">C</div>
-            <div>
-              <h1>Campus Cash</h1>
-              <p>Botswana student loans, simplified</p>
+      <div class="status-bar">
+        <span>Campus Cash</span>
+        <div class="status-icons">
+          <span>4G</span>
+          <span>88%</span>
+        </div>
+      </div>
+
+      <main class="screen-stack">
+        <section class="screen active" id="screen-auth">
+          <div class="auth-hero">
+            <div class="hero-orb orb-1"></div>
+            <div class="hero-orb orb-2"></div>
+            <div class="hero-copy">
+              <p class="eyebrow">Botswana Student Finance</p>
+              <h1>Cash when campus life gets real.</h1>
+              <p class="subtle">A polished clickable prototype showing how students would discover, apply, receive, and repay a short-term loan.</p>
             </div>
           </div>
-          <div class="hero-pill-row">
-            <span class="hero-pill">30 days</span>
-            <span class="hero-pill">25% fee</span>
-            <span class="hero-pill">Student-first</span>
-          </div>
-        </div>
 
-        <div class="panel auth-panel">
-          <div class="tabs top-tabs">
-            <button class="tab-btn active" data-auth-tab="login">Log in</button>
-            <button class="tab-btn" data-auth-tab="signup">Sign up</button>
-          </div>
-
-          <div class="auth-view active" id="auth-login">
-            <h2>Welcome back</h2>
-            <p class="muted">Use the demo account or type anything to continue.</p>
-            <label>Email or Student ID</label>
-            <input type="text" id="login-identifier" placeholder="e.g. UB20260091" value="UB20260091">
-            <label>Password</label>
-            <input type="password" id="login-password" placeholder="••••••••" value="password123">
-            <button class="primary-btn" id="login-btn">Open demo app</button>
-          </div>
-
-          <div class="auth-view" id="auth-signup">
-            <h2>Create account</h2>
-            <p class="muted">This is a clickable prototype.</p>
-            <label>Full name</label>
-            <input type="text" id="signup-name" placeholder="Your full name">
-            <label>School</label>
-            <select id="signup-school">
-              <option>University of Botswana</option>
-              <option>BAC</option>
-              <option>Botho University</option>
-              <option>Limkokwing Botswana</option>
-            </select>
-            <label>Student ID</label>
-            <input type="text" id="signup-student-id" placeholder="e.g. UB20261101">
-            <button class="primary-btn" id="signup-btn">Create demo account</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-home">
-        <div class="topbar">
-          <div>
-            <p class="eyebrow">Good afternoon</p>
-            <h2 id="student-name-home">Nara Berry</h2>
-          </div>
-          <button class="icon-btn" id="notify-btn">🔔</button>
-        </div>
-
-        <div class="balance-card gradient-card">
-          <div>
-            <p class="eyebrow light">Available limit</p>
-            <h3 id="available-limit">P 800</h3>
-          </div>
-          <span class="status-chip">Eligible</span>
-          <div class="balance-grid">
-            <div>
-              <span>Current loan</span>
-              <strong id="current-loan-short">P 0</strong>
+          <div class="glass-card auth-card">
+            <div class="segmented">
+              <button class="seg active" data-auth-tab="login">Log in</button>
+              <button class="seg" data-auth-tab="signup">Create account</button>
             </div>
-            <div>
-              <span>Due date</span>
-              <strong id="due-date-short">—</strong>
+
+            <form id="loginForm" class="auth-form active">
+              <label>
+                <span>Student ID</span>
+                <input type="text" id="loginStudentId" value="UB20260091" placeholder="e.g. UB20260091" />
+              </label>
+              <label>
+                <span>Password</span>
+                <input type="password" value="12345678" />
+              </label>
+              <button type="submit" class="primary-btn">Enter dashboard</button>
+            </form>
+
+            <form id="signupForm" class="auth-form">
+              <label>
+                <span>Full name</span>
+                <input type="text" id="signupName" placeholder="Neo Molefe" />
+              </label>
+              <label>
+                <span>School</span>
+                <select id="signupSchool">
+                  <option>University of Botswana</option>
+                  <option>Botswana Accountancy College</option>
+                  <option>Botho University</option>
+                  <option>Limkokwing University</option>
+                </select>
+              </label>
+              <label>
+                <span>Student ID</span>
+                <input type="text" id="signupStudentId" placeholder="UB20260111" />
+              </label>
+              <button type="submit" class="primary-btn">Create demo account</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-home">
+          <div class="screen-body home-layout">
+            <header class="hero-panel">
+              <div class="hero-top">
+                <div>
+                  <p class="eyebrow">Good afternoon</p>
+                  <h2 id="welcomeName">Neo</h2>
+                </div>
+                <button class="icon-btn" data-open="screen-profile">☻</button>
+              </div>
+
+              <div class="balance-card">
+                <div>
+                  <p>Available to borrow</p>
+                  <h3>P<span id="eligibleAmount">800</span></h3>
+                </div>
+                <span class="pill success">Low risk score</span>
+              </div>
+
+              <div class="quick-actions">
+                <button class="quick-action" data-open="screen-apply">
+                  <span class="qa-icon">↗</span>
+                  <span>Apply</span>
+                </button>
+                <button class="quick-action" data-open="screen-wallet">
+                  <span class="qa-icon">◉</span>
+                  <span>Wallet</span>
+                </button>
+                <button class="quick-action" data-open="screen-repay">
+                  <span class="qa-icon">✓</span>
+                  <span>Repay</span>
+                </button>
+              </div>
+            </header>
+
+            <section class="bento-grid">
+              <article class="glass-card bento large">
+                <div class="card-head">
+                  <div>
+                    <p class="eyebrow">Active loan</p>
+                    <h3 id="homeLoanState">No active loan</h3>
+                  </div>
+                  <span id="loanStatusPill" class="pill muted">Ready</span>
+                </div>
+                <div class="progress-wrap">
+                  <div class="progress-bar"><span id="homeProgress"></span></div>
+                  <div class="progress-meta">
+                    <span id="progressLeft">No repayment due</span>
+                    <span id="dueDateBadge">—</span>
+                  </div>
+                </div>
+                <button class="secondary-btn" data-open="screen-status">View status</button>
+              </article>
+
+              <article class="glass-card bento">
+                <p class="eyebrow">Loan model</p>
+                <h3>25% fixed fee</h3>
+                <p class="muted-copy">Borrow once, repay once. Simple terms designed for urgent student needs.</p>
+              </article>
+
+              <article class="glass-card bento">
+                <p class="eyebrow">Disbursement</p>
+                <h3>Wallet first</h3>
+                <p class="muted-copy">Demo shows instant in-app wallet credit before real payout rails are integrated.</p>
+              </article>
+            </section>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-apply">
+          <div class="screen-body">
+            <div class="topline">
+              <button class="ghost-btn" data-open="screen-home">←</button>
+              <div>
+                <p class="eyebrow">Loan application</p>
+                <h2>Apply in under 2 minutes</h2>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="quick-actions">
-          <button class="action-card nav-action" data-target="screen-apply">
-            <span>💸</span>
-            <strong>Apply</strong>
-            <small>Request a loan</small>
-          </button>
-          <button class="action-card nav-action" data-target="screen-status">
-            <span>📄</span>
-            <strong>Status</strong>
-            <small>Track application</small>
-          </button>
-          <button class="action-card nav-action" data-target="screen-wallet">
-            <span>👛</span>
-            <strong>Wallet</strong>
-            <small>Disbursement</small>
-          </button>
-          <button class="action-card nav-action" data-target="screen-profile">
-            <span>👤</span>
-            <strong>Profile</strong>
-            <small>KYC & support</small>
-          </button>
-        </div>
+            <div class="glass-card form-card">
+              <label>
+                <span>How much do you need?</span>
+                <input type="range" id="loanAmount" min="200" max="1000" step="50" value="400" />
+              </label>
+              <div class="amount-display">
+                <div>
+                  <p>Requested</p>
+                  <h3>P<span id="requestedValue">400</span></h3>
+                </div>
+                <div>
+                  <p>Fee (25%)</p>
+                  <h3>P<span id="feeValue">100</span></h3>
+                </div>
+                <div>
+                  <p>Total repayment</p>
+                  <h3>P<span id="repaymentValue">500</span></h3>
+                </div>
+              </div>
 
-        <div class="panel info-panel">
-          <div class="panel-header">
-            <h3>How it works</h3>
-            <button class="text-link nav-action" data-target="screen-apply">Try it</button>
-          </div>
-          <div class="step-list">
-            <div class="step-item"><span>1</span><p>Apply using your student details</p></div>
-            <div class="step-item"><span>2</span><p>Get an instant demo decision</p></div>
-            <div class="step-item"><span>3</span><p>Receive funds in your wallet</p></div>
-            <div class="step-item"><span>4</span><p>Repay after 30 days with a 25% fee</p></div>
-          </div>
-        </div>
+              <div class="term-grid">
+                <button class="term-chip active" data-days="14">14 days</button>
+                <button class="term-chip" data-days="21">21 days</button>
+                <button class="term-chip" data-days="30">30 days</button>
+              </div>
 
-        <div class="panel">
-          <div class="panel-header">
-            <h3>My loan summary</h3>
-            <button class="text-link nav-action" data-target="screen-status">Open</button>
-          </div>
-          <div class="summary-grid">
-            <div><span>Status</span><strong id="summary-status">No active loan</strong></div>
-            <div><span>Repayment</span><strong id="summary-repayment">P 0</strong></div>
-            <div><span>Term</span><strong>30 days</strong></div>
-            <div><span>Fee</span><strong>25%</strong></div>
-          </div>
-        </div>
-      </div>
+              <label>
+                <span>Reason for loan</span>
+                <select id="loanReason">
+                  <option>Food & groceries</option>
+                  <option>Transport</option>
+                  <option>Rent top-up</option>
+                  <option>Emergency expense</option>
+                  <option>Study materials</option>
+                </select>
+              </label>
 
-      <div class="screen" id="screen-apply">
-        <div class="topbar compact">
-          <button class="icon-btn back-btn" data-back="screen-home">←</button>
-          <h2>Apply for a loan</h2>
-          <div class="spacer"></div>
-        </div>
+              <label>
+                <span>Monthly allowance / income</span>
+                <input type="number" id="incomeValue" value="1500" />
+              </label>
 
-        <div class="panel">
-          <h3>Choose amount</h3>
-          <div class="amount-pills" id="amount-pills">
-            <button class="amount-pill active" data-amount="200">P 200</button>
-            <button class="amount-pill" data-amount="350">P 350</button>
-            <button class="amount-pill" data-amount="500">P 500</button>
-            <button class="amount-pill" data-amount="800">P 800</button>
-            <button class="amount-pill" data-amount="1000">P 1,000</button>
-          </div>
-          <label>Or enter custom amount</label>
-          <input type="range" min="200" max="1000" step="50" value="200" id="amount-slider">
-          <div class="calc-card">
-            <div><span>Selected amount</span><strong id="selected-amount">P 200</strong></div>
-            <div><span>Service fee (25%)</span><strong id="selected-fee">P 50</strong></div>
-            <div><span>Total repayment</span><strong id="selected-total">P 250</strong></div>
-            <div><span>Repayment date</span><strong id="selected-date">In 30 days</strong></div>
-          </div>
-        </div>
+              <button id="submitApplication" class="primary-btn">Submit application</button>
+            </div>
 
-        <div class="panel">
-          <h3>Student details</h3>
-          <label>Institution</label>
-          <select id="institution">
-            <option>University of Botswana</option>
-            <option>BAC</option>
-            <option>Botho University</option>
-            <option>Limkokwing Botswana</option>
-          </select>
-          <label>Year of study</label>
-          <select id="year-of-study">
-            <option>Year 1</option>
-            <option>Year 2</option>
-            <option>Year 3</option>
-            <option>Year 4</option>
-            <option>Postgraduate</option>
-          </select>
-          <label>Reason for loan</label>
-          <select id="loan-purpose">
-            <option>Food & groceries</option>
-            <option>Transport</option>
-            <option>Books & stationery</option>
-            <option>Accommodation</option>
-            <option>Emergency expense</option>
-          </select>
-          <label>Wallet / mobile number</label>
-          <input type="text" id="mobile-number" placeholder="e.g. 71 234 567">
-          <button class="primary-btn" id="submit-application">Submit application</button>
-        </div>
-
-        <div class="panel hidden" id="decision-card">
-          <div class="decision-header">
-            <div class="decision-icon">✓</div>
-            <div>
-              <h3 id="decision-title">Pre-approved</h3>
-              <p class="muted" id="decision-text">Your demo application is ready.</p>
+            <div class="glass-card info-card">
+              <p class="eyebrow">How the demo works</p>
+              <p class="muted-copy">This prototype simulates risk scoring, approval, wallet funding, and repayment progress without needing a backend.</p>
             </div>
           </div>
-          <div class="summary-grid single-gap">
-            <div><span>Amount</span><strong id="decision-amount">P 200</strong></div>
-            <div><span>Total to repay</span><strong id="decision-total">P 250</strong></div>
-            <div><span>Student ID</span><strong id="decision-student-id">UB20260091</strong></div>
-            <div><span>Wallet ETA</span><strong>Within minutes</strong></div>
+        </section>
+
+        <section class="screen" id="screen-status">
+          <div class="screen-body">
+            <div class="topline">
+              <button class="ghost-btn" data-open="screen-home">←</button>
+              <div>
+                <p class="eyebrow">Loan tracking</p>
+                <h2>Your loan journey</h2>
+              </div>
+            </div>
+
+            <div class="timeline glass-card">
+              <div class="timeline-step done">
+                <div class="dot"></div>
+                <div>
+                  <h4>Application sent</h4>
+                  <p>Student details and affordability captured.</p>
+                </div>
+              </div>
+              <div class="timeline-step" id="stepDecision">
+                <div class="dot"></div>
+                <div>
+                  <h4>Decision</h4>
+                  <p id="decisionText">Pending until you submit an application.</p>
+                </div>
+              </div>
+              <div class="timeline-step" id="stepWallet">
+                <div class="dot"></div>
+                <div>
+                  <h4>Wallet funded</h4>
+                  <p id="walletText">No funds disbursed yet.</p>
+                </div>
+              </div>
+              <div class="timeline-step" id="stepRepay">
+                <div class="dot"></div>
+                <div>
+                  <h4>Repayment</h4>
+                  <p id="repayText">No repayment started.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-card metric-card">
+              <div class="metric-row">
+                <span>Status</span>
+                <strong id="statusLabel">Ready to apply</strong>
+              </div>
+              <div class="metric-row">
+                <span>Amount due</span>
+                <strong id="statusAmount">P0</strong>
+              </div>
+              <div class="metric-row">
+                <span>Due date</span>
+                <strong id="statusDue">—</strong>
+              </div>
+            </div>
           </div>
-          <div class="button-stack">
-            <button class="primary-btn nav-action" data-target="screen-wallet">View wallet</button>
-            <button class="secondary-btn nav-action" data-target="screen-status">Track status</button>
+        </section>
+
+        <section class="screen" id="screen-wallet">
+          <div class="screen-body">
+            <div class="topline">
+              <button class="ghost-btn" data-open="screen-home">←</button>
+              <div>
+                <p class="eyebrow">Wallet</p>
+                <h2>Cash-out destination</h2>
+              </div>
+            </div>
+
+            <div class="wallet-stack">
+              <div class="wallet-card gradient-card">
+                <p>Campus Cash Wallet</p>
+                <h3>P<span id="walletBalance">0</span></h3>
+                <span class="pill live">Demo balance</span>
+              </div>
+
+              <div class="glass-card">
+                <div class="metric-row">
+                  <span>Last transfer</span>
+                  <strong id="lastTransfer">No disbursement yet</strong>
+                </div>
+                <div class="metric-row">
+                  <span>Preferred payout</span>
+                  <strong>Orange Money / Bank</strong>
+                </div>
+                <button id="simulateDisbursement" class="primary-btn">Simulate disbursement</button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <div class="screen" id="screen-status">
-        <div class="topbar compact">
-          <button class="icon-btn back-btn" data-back="screen-home">←</button>
-          <h2>Loan status</h2>
-          <div class="spacer"></div>
-        </div>
+        <section class="screen" id="screen-repay">
+          <div class="screen-body">
+            <div class="topline">
+              <button class="ghost-btn" data-open="screen-home">←</button>
+              <div>
+                <p class="eyebrow">Repayment</p>
+                <h2>Close your loan</h2>
+              </div>
+            </div>
 
-        <div class="panel status-hero">
-          <div class="status-badge" id="status-badge">No active application</div>
-          <h3 id="status-headline">You have no active loan yet</h3>
-          <p class="muted" id="status-subtext">Apply to see your live journey here.</p>
-        </div>
+            <div class="glass-card repay-card">
+              <div class="metric-row">
+                <span>Outstanding balance</span>
+                <strong id="outstandingAmount">P0</strong>
+              </div>
+              <div class="metric-row">
+                <span>Repayment progress</span>
+                <strong id="repayProgressText">0%</strong>
+              </div>
+              <div class="progress-bar"><span id="repayProgressBar"></span></div>
 
-        <div class="panel">
-          <h3>Journey</h3>
-          <div class="timeline">
-            <div class="timeline-item" id="t1"><span></span><div><strong>Application submitted</strong><small>Your details were received</small></div></div>
-            <div class="timeline-item" id="t2"><span></span><div><strong>Eligibility checked</strong><small>Affordability and student profile reviewed</small></div></div>
-            <div class="timeline-item" id="t3"><span></span><div><strong>Funds prepared</strong><small>Wallet transfer queued</small></div></div>
-            <div class="timeline-item" id="t4"><span></span><div><strong>Repayment pending</strong><small>Due after 30 days</small></div></div>
+              <div class="repay-actions">
+                <button class="secondary-btn repay-btn" data-pay="0.5">Pay 50%</button>
+                <button class="primary-btn repay-btn" data-pay="1">Pay in full</button>
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <p class="eyebrow">Demo note</p>
+              <p class="muted-copy">Tap repayment buttons to simulate an in-app collection flow. This is enough to show investors how the student experience would feel in practice.</p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div class="panel">
-          <h3>Loan details</h3>
-          <div class="summary-grid">
-            <div><span>Amount</span><strong id="status-amount">P 0</strong></div>
-            <div><span>Fee</span><strong id="status-fee">P 0</strong></div>
-            <div><span>Total due</span><strong id="status-total">P 0</strong></div>
-            <div><span>Due date</span><strong id="status-date">—</strong></div>
+        <section class="screen" id="screen-profile">
+          <div class="screen-body">
+            <div class="profile-cover"></div>
+            <div class="profile-card">
+              <div class="avatar-ring">
+                <div class="avatar" id="avatarInitial">N</div>
+              </div>
+              <h2 id="profileName">Neo Molefe</h2>
+              <p id="profileHandle">@UB20260091</p>
+
+              <div class="tag-row">
+                <span class="tag">Student loans</span>
+                <span class="tag">Botswana</span>
+                <span class="tag">Mobile first</span>
+              </div>
+
+              <div class="feature-list glass-card">
+                <div class="feature-item"><span>✓</span><div><strong>Fast application</strong><p>Amount, term, purpose, affordability.</p></div></div>
+                <div class="feature-item"><span>✓</span><div><strong>Loan tracking</strong><p>See each stage from decision to repayment.</p></div></div>
+                <div class="feature-item"><span>✓</span><div><strong>Wallet experience</strong><p>Simulated funding and payout state.</p></div></div>
+                <div class="feature-item"><span>✓</span><div><strong>Mobile-ready UX</strong><p>Designed for pitch demos on phone screens.</p></div></div>
+              </div>
+            </div>
           </div>
-          <div class="button-stack top-gap">
-            <button class="primary-btn nav-action" data-target="screen-repay">Repayment options</button>
-            <button class="secondary-btn nav-action" data-target="screen-home">Back home</button>
-          </div>
-        </div>
-      </div>
+        </section>
 
-      <div class="screen" id="screen-wallet">
-        <div class="topbar compact">
-          <button class="icon-btn back-btn" data-back="screen-home">←</button>
-          <h2>Student wallet</h2>
-          <div class="spacer"></div>
-        </div>
+        <div class="toast" id="toast"></div>
+      </main>
 
-        <div class="balance-card dark-card">
-          <p class="eyebrow light">Wallet balance</p>
-          <h3 id="wallet-balance">P 0</h3>
-          <div class="wallet-inline">
-            <span id="wallet-account">Campus Cash Wallet • Demo</span>
-            <span id="wallet-state">No disbursement yet</span>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <h3>Recent activity</h3>
-            <button class="text-link" id="simulate-disbursement">Simulate payout</button>
-          </div>
-          <div id="activity-list" class="activity-list">
-            <div class="empty-state">No transactions yet.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-repay">
-        <div class="topbar compact">
-          <button class="icon-btn back-btn" data-back="screen-status">←</button>
-          <h2>Repay loan</h2>
-          <div class="spacer"></div>
-        </div>
-
-        <div class="panel">
-          <h3>Repayment summary</h3>
-          <div class="calc-card repay-card">
-            <div><span>Outstanding</span><strong id="repay-outstanding">P 0</strong></div>
-            <div><span>Due date</span><strong id="repay-date">—</strong></div>
-            <div><span>Method</span><strong>Wallet / bank / mobile money</strong></div>
-          </div>
-          <div class="payment-options">
-            <button class="option-card">Wallet payment</button>
-            <button class="option-card">Bank transfer</button>
-            <button class="option-card">Orange Money</button>
-          </div>
-          <button class="primary-btn" id="repay-now-btn">Simulate repayment</button>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-profile">
-        <div class="topbar compact">
-          <button class="icon-btn back-btn" data-back="screen-home">←</button>
-          <h2>Profile</h2>
-          <div class="spacer"></div>
-        </div>
-
-        <div class="profile-header panel">
-          <div class="avatar-lg" id="profile-avatar">N</div>
-          <h3 id="profile-name">Nara Berry</h3>
-          <p class="muted" id="profile-id">@UB20260091</p>
-          <div class="tag-row">
-            <span>#student</span>
-            <span>#botswana</span>
-            <span>#verified demo</span>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>Features the student will have</h3>
-          <div class="feature-list">
-            <button class="feature-item nav-action" data-target="screen-apply"><strong>Loan application</strong><small>Fast request flow with amount selection and purpose</small></button>
-            <button class="feature-item nav-action" data-target="screen-status"><strong>Application tracking</strong><small>See approval stage and due date</small></button>
-            <button class="feature-item nav-action" data-target="screen-wallet"><strong>Wallet view</strong><small>See payouts and transaction history</small></button>
-            <button class="feature-item nav-action" data-target="screen-repay"><strong>Repayment flow</strong><small>Choose how to repay and mark complete</small></button>
-            <button class="feature-item"><strong>KYC upload</strong><small>Coming in full build: Omang / student card verification</small></button>
-            <button class="feature-item"><strong>Support chat</strong><small>Coming in full build: in-app help and reminders</small></button>
-          </div>
-        </div>
-      </div>
-
-      <nav class="bottom-nav" id="bottom-nav">
-        <button class="nav-btn active" data-target="screen-home">Home</button>
-        <button class="nav-btn" data-target="screen-apply">Apply</button>
-        <button class="nav-btn center-nav" data-target="screen-status">Status</button>
-        <button class="nav-btn" data-target="screen-wallet">Wallet</button>
-        <button class="nav-btn" data-target="screen-profile">Profile</button>
+      <nav class="bottom-nav hidden" id="bottomNav">
+        <button class="nav-item active" data-open="screen-home">
+          <span>⌂</span><small>Home</small>
+        </button>
+        <button class="nav-item" data-open="screen-apply">
+          <span>✦</span><small>Apply</small>
+        </button>
+        <button class="nav-item nav-center" data-open="screen-status">
+          <span>◎</span>
+        </button>
+        <button class="nav-item" data-open="screen-wallet">
+          <span>◌</span><small>Wallet</small>
+        </button>
+        <button class="nav-item" data-open="screen-profile">
+          <span>☻</span><small>Profile</small>
+        </button>
       </nav>
     </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
