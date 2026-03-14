@@ -90,7 +90,7 @@
                   <p>Available to borrow</p>
                   <h3>P<span id="eligibleAmount">800</span></h3>
                 </div>
-                <span class="pill success">Low risk score</span>
+                <span class="pill success" id="riskBadge">Low risk score</span>
               </div>
 
               <div class="quick-actions">
@@ -287,7 +287,7 @@
                 </div>
                 <div class="metric-row">
                   <span>Preferred payout</span>
-                  <strong>Orange Money / Bank</strong>
+                  <strong id="payoutText">Not linked yet</strong>
                 </div>
                 <button id="simulateDisbursement" class="primary-btn">Simulate disbursement</button>
               </div>
@@ -324,7 +324,7 @@
 
             <div class="glass-card">
               <p class="eyebrow">Demo note</p>
-              <p class="muted-copy">Tap repayment buttons to simulate an in-app collection flow. </p>
+              <p class="muted-copy">Tap repayment buttons to simulate an in-app collection flow. This is enough to show investors how the student experience would feel in practice.</p>
             </div>
           </div>
         </section>
@@ -345,11 +345,63 @@
                 <span class="tag">Mobile first</span>
               </div>
 
+              <div class="glass-card readiness-card">
+                <div class="card-head compact">
+                  <div>
+                    <p class="eyebrow">Account readiness</p>
+                    <h3 id="readinessLabel">2 of 4 complete</h3>
+                  </div>
+                  <span class="pill live" id="readinessPill">Needs setup</span>
+                </div>
+                <div class="progress-bar"><span id="readinessBar"></span></div>
+                <p class="muted-copy" id="readinessText">Complete profile checks before higher loan limits unlock.</p>
+              </div>
+
+              <div class="profile-section-title">
+                <p class="eyebrow">Verification & setup</p>
+                <h3>Student-side features</h3>
+              </div>
+
+              <div class="feature-list verification-list">
+                <button class="feature-item action-item" data-verify="student">
+                  <span class="feature-icon">🎓</span>
+                  <div>
+                    <strong>Student validation</strong>
+                    <p id="verifyStudentText">Confirm school and student ID against campus records.</p>
+                  </div>
+                  <span class="feature-status" id="verifyStudentStatus">Start</span>
+                </button>
+                <button class="feature-item action-item" data-verify="kyc">
+                  <span class="feature-icon">🪪</span>
+                  <div>
+                    <strong>KYC identity check</strong>
+                    <p id="verifyKycText">Upload Omang / passport and selfie for identity verification.</p>
+                  </div>
+                  <span class="feature-status" id="verifyKycStatus">Start</span>
+                </button>
+                <button class="feature-item action-item" data-verify="affordability">
+                  <span class="feature-icon">📊</span>
+                  <div>
+                    <strong>Affordability validation</strong>
+                    <p id="verifyAffordabilityText">Confirm allowance, sponsor support, or income pattern.</p>
+                  </div>
+                  <span class="feature-status" id="verifyAffordabilityStatus">Start</span>
+                </button>
+                <button class="feature-item action-item" data-verify="payout">
+                  <span class="feature-icon">💸</span>
+                  <div>
+                    <strong>Payout setup</strong>
+                    <p id="verifyPayoutText">Link Orange Money, MyZaka, or bank account for disbursement.</p>
+                  </div>
+                  <span class="feature-status" id="verifyPayoutStatus">Start</span>
+                </button>
+              </div>
+
               <div class="feature-list glass-card">
-                <div class="feature-item"><span>✓</span><div><strong>Fast application</strong><p>Amount, term, purpose, affordability.</p></div></div>
-                <div class="feature-item"><span>✓</span><div><strong>Loan tracking</strong><p>See each stage from decision to repayment.</p></div></div>
-                <div class="feature-item"><span>✓</span><div><strong>Wallet experience</strong><p>Simulated funding and payout state.</p></div></div>
-                <div class="feature-item"><span>✓</span><div><strong>Mobile-ready UX</strong><p>Designed for pitch demos on phone screens.</p></div></div>
+                <div class="feature-item"><span class="feature-icon small">⚡</span><div><strong>Fast application</strong><p>Amount, term, purpose, and affordability in one flow.</p></div></div>
+                <div class="feature-item"><span class="feature-icon small">🛰</span><div><strong>Loan tracking</strong><p>See each stage from decision to funding to repayment.</p></div></div>
+                <div class="feature-item"><span class="feature-icon small">🔔</span><div><strong>Smart reminders</strong><p>In the real app, due-date nudges and follow-ups would live here.</p></div></div>
+                <div class="feature-item"><span class="feature-icon small">🛟</span><div><strong>Support & disputes</strong><p>Students can raise issues, payment proof, or reschedule requests.</p></div></div>
               </div>
             </div>
           </div>

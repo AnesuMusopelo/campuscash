@@ -1,8 +1,16 @@
+const defaultVerification = {
+  student: false,
+  kyc: false,
+  affordability: false,
+  payout: false
+};
+
 const state = {
   user: JSON.parse(localStorage.getItem("campusCashUser")) || {
     name: "Neo Molefe",
     studentId: "UB20260091",
-    school: "University of Botswana"
+    school: "University of Botswana",
+    verification: { ...defaultVerification, student: true, affordability: true }
   },
   loan: JSON.parse(localStorage.getItem("campusCashLoan")) || {
     amount: 0,
@@ -18,6 +26,8 @@ const state = {
     repaidFraction: 0
   }
 };
+
+state.user.verification = { ...defaultVerification, ...(state.user.verification || {}) };
 
 const screens = [...document.querySelectorAll(".screen")];
 const nav = document.getElementById("bottomNav");
@@ -55,6 +65,27 @@ function openScreen(id) {
   if (id === "screen-auth") nav.classList.add("hidden");
 }
 
+function verificationCount() {
+  return Object.values(state.user.verification).filter(Boolean).length;
+}
+
+function verificationReady() {
+  return verificationCount() === 4;
+}
+
+function currentEligibleAmount() {
+  if (!verificationReady()) return 500;
+  if (state.loan.status === "ready" || state.loan.status === "repaid") return 1000;
+  if (state.loan.status === "declined") return 1000;
+  return 0;
+}
+
+function updateVerificationItem(key, complete) {
+  state.user.verification[key] = complete;
+  saveState();
+  hydrate();
+}
+
 document.querySelectorAll("[data-open]").forEach(btn => {
   btn.addEventListener("click", () => openScreen(btn.dataset.open));
 });
@@ -84,10 +115,24 @@ document.getElementById("signupForm").addEventListener("submit", (e) => {
   const name = document.getElementById("signupName").value.trim() || "New Student";
   const school = document.getElementById("signupSchool").value;
   const studentId = document.getElementById("signupStudentId").value.trim() || "UB20260111";
-  state.user = { name, school, studentId };
+  state.user = {
+    name,
+    school,
+    studentId,
+    verification: { ...defaultVerification }
+  };
   state.loan = {
-    amount: 0, fee: 0, total: 0, days: 14, reason: "Food & groceries", income: 1500,
-    status: "ready", dueDate: null, walletBalance: 0, outstanding: 0, repaidFraction: 0
+    amount: 0,
+    fee: 0,
+    total: 0,
+    days: 14,
+    reason: "Food & groceries",
+    income: 1500,
+    status: "ready",
+    dueDate: null,
+    walletBalance: 0,
+    outstanding: 0,
+    repaidFraction: 0
   };
   saveState();
   hydrate();
@@ -125,7 +170,16 @@ document.getElementById("submitApplication").addEventListener("click", () => {
   const fee = Math.round(amount * 0.25);
   const total = amount + fee;
   const income = Number(document.getElementById("incomeValue").value || 0);
-  const approved = income >= total * 1.2 && amount <= 800;
+
+  if (!state.user.verification.student || !state.user.verification.kyc) {
+    openScreen("screen-profile");
+    showToast("Complete student validation and KYC first");
+    return;
+  }
+
+  const affordabilityBoost = state.user.verification.affordability ? 1 : 0.85;
+  const verifiedLimit = verificationReady() ? 1000 : 600;
+  const approved = income * affordabilityBoost >= total * 1.2 && amount <= verifiedLimit;
   const due = new Date();
   due.setDate(due.getDate() + selectedDays);
 
@@ -149,6 +203,11 @@ document.getElementById("submitApplication").addEventListener("click", () => {
 document.getElementById("simulateDisbursement").addEventListener("click", () => {
   if (state.loan.status !== "approved") {
     showToast("Approve a demo loan first");
+    return;
+  }
+  if (!state.user.verification.payout) {
+    openScreen("screen-profile");
+    showToast("Link a payout method first");
     return;
   }
   if (state.loan.walletBalance >= state.loan.amount) {
@@ -185,13 +244,68 @@ document.querySelectorAll(".repay-btn").forEach(btn => {
   });
 });
 
+document.querySelectorAll("[data-verify]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const key = btn.dataset.verify;
+    const current = !!state.user.verification[key];
+    updateVerificationItem(key, !current);
+    const map = {
+      student: current ? "Student validation reset" : "Student validation completed",
+      kyc: current ? "KYC reset" : "KYC verified",
+      affordability: current ? "Affordability reset" : "Affordability validated",
+      payout: current ? "Payout setup removed" : "Orange Money linked"
+    };
+    showToast(map[key]);
+  });
+});
+
+function hydrateVerificationUI() {
+  const copy = {
+    student: {
+      on: ["Verified with institution", "Verified"],
+      off: ["Confirm school and student ID against campus records.", "Start"]
+    },
+    kyc: {
+      on: ["Omang and selfie matched", "Verified"],
+      off: ["Upload Omang / passport and selfie for identity verification.", "Start"]
+    },
+    affordability: {
+      on: ["Allowance / income pattern confirmed", "Ready"],
+      off: ["Confirm allowance, sponsor support, or income pattern.", "Start"]
+    },
+    payout: {
+      on: ["Orange Money linked for disbursement", "Linked"],
+      off: ["Link Orange Money, MyZaka, or bank account for disbursement.", "Start"]
+    }
+  };
+
+  Object.keys(copy).forEach((key) => {
+    const enabled = !!state.user.verification[key];
+    document.getElementById(`verify${key.charAt(0).toUpperCase() + key.slice(1)}Text`).textContent = enabled ? copy[key].on[0] : copy[key].off[0];
+    document.getElementById(`verify${key.charAt(0).toUpperCase() + key.slice(1)}Status`).textContent = enabled ? copy[key].on[1] : copy[key].off[1];
+    const item = document.querySelector(`[data-verify="${key}"]`);
+    item.classList.toggle("is-complete", enabled);
+  });
+
+  const done = verificationCount();
+  const pct = (done / 4) * 100;
+  document.getElementById("readinessLabel").textContent = `${done} of 4 complete`;
+  document.getElementById("readinessBar").style.width = `${pct}%`;
+  document.getElementById("readinessText").textContent = verificationReady()
+    ? "Profile is fully ready for higher limits and faster disbursement."
+    : "Complete profile checks before higher loan limits unlock.";
+  document.getElementById("readinessPill").textContent = verificationReady() ? "Fully ready" : "Needs setup";
+}
+
 function hydrate() {
   const firstName = state.user.name.split(" ")[0] || state.user.name;
   document.getElementById("welcomeName").textContent = firstName;
   document.getElementById("profileName").textContent = state.user.name;
   document.getElementById("profileHandle").textContent = "@" + state.user.studentId;
   document.getElementById("avatarInitial").textContent = firstName.charAt(0).toUpperCase();
-  document.getElementById("eligibleAmount").textContent = state.loan.status === "repaid" || state.loan.status === "ready" ? "800" : "0";
+  document.getElementById("eligibleAmount").textContent = formatMoney(currentEligibleAmount());
+  document.getElementById("riskBadge").textContent = verificationReady() ? "Verified profile" : "Profile incomplete";
+  document.getElementById("payoutText").textContent = state.user.verification.payout ? "Orange Money linked" : "Not linked yet";
 
   const statusMap = {
     ready: "Ready",
@@ -236,7 +350,7 @@ function hydrate() {
 
   if (state.loan.status === "ready") {
     decisionText.textContent = "Pending until you submit an application.";
-    walletText.textContent = "No funds disbursed yet.";
+    walletText.textContent = state.user.verification.payout ? "Payout route is ready." : "No payout route linked yet.";
     repayText.textContent = "No repayment started.";
   } else if (state.loan.status === "declined") {
     decisionStep.classList.add("done");
@@ -248,7 +362,7 @@ function hydrate() {
     decisionText.textContent = `Approved for P${formatMoney(state.loan.amount)} over ${state.loan.days} days.`;
     if (state.loan.status === "approved") {
       walletStep.classList.add("active");
-      walletText.textContent = "Ready to move funds into wallet.";
+      walletText.textContent = state.user.verification.payout ? "Ready to move funds into wallet." : "Complete payout setup before funding.";
       repayText.textContent = "Repayment opens after funding.";
     }
     if (state.loan.status === "funded") {
@@ -277,6 +391,8 @@ function hydrate() {
   const repayPct = Math.round((state.loan.repaidFraction || 0) * 100);
   document.getElementById("repayProgressText").textContent = repayPct + "%";
   document.getElementById("repayProgressBar").style.width = repayPct + "%";
+
+  hydrateVerificationUI();
 }
 
 hydrate();
